@@ -2,13 +2,12 @@ package LexerTest;
 
 
 import org.junit.Test;
-import project.msc.lexer.Lexicon;
-import project.msc.tokens.Token;
-import project.msc.tokens.TokenCheck;
+import project.compiler.lexer.Lexicon;
+import project.compiler.tokens.Token;
+import project.compiler.tokens.TokenCheck;
 
 import java.util.List;
 import static org.junit.Assert.*;
-import static project.msc.lexer.LineCheck.lineChecker;
 
 public class TokenTest {
 

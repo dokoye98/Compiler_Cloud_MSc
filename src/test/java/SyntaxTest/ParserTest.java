@@ -1,11 +1,11 @@
 package SyntaxTest;
 
 import org.junit.jupiter.api.Test;
-import project.msc.lexer.Lexicon;
-import project.msc.nodes.*;
-import project.msc.nodes.binarynodes.AdditionNode;
-import project.msc.syntaxtree.Parser;
-import project.msc.tokens.Token;
+import project.compiler.lexer.Lexicon;
+import project.compiler.nodes.*;
+import project.compiler.nodes.binarynodes.AdditionNode;
+import project.compiler.syntaxtree.Parser;
+import project.compiler.tokens.Token;
 
 import java.util.List;
 

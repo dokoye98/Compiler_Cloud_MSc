@@ -1,7 +1,7 @@
 package LexerTest;
 
 import org.junit.Test;
-import project.msc.lexer.LineCheck;
+import project.compiler.lexer.LineCheck;
 
 import java.util.List;
 

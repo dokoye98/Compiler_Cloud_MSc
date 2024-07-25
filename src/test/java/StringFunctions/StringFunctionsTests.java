@@ -1,9 +1,9 @@
 package StringFunctions;
 
 import org.junit.Test;
-import project.msc.syntaxfunctions.StringChecker;
-import project.msc.tokens.Token;
-import project.msc.tokens.TokenCheck;
+import project.compiler.syntaxfunctions.StringChecker;
+import project.compiler.tokens.Token;
+import project.compiler.tokens.TokenCheck;
 
 import java.util.Arrays;
 import java.util.List;
