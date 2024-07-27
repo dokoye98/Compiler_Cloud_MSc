@@ -1,6 +1,8 @@
 package project.compiler.intercode;
 
 import project.compiler.nodes.*;
+import project.vm.codegen.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,17 +13,20 @@ public class TACgenerator {
         return "t" + (tempVarCounter++);
     }
 
-    public List<String> generateTAC(Node ast) {
-        List<String> tacCode = new ArrayList<>();
+    public List<Instruction> generateCode(Node ast) {
+        List<Instruction> instructions = new ArrayList<>();
         if (ast instanceof PrintStatementNode) {
             PrintStatementNode printNode = (PrintStatementNode) ast;
-            //String variableName = printNode.getExpression(); -decided a different path future iterations will require less redundant code
             ExpressionNode value = printNode.getExpression();
 
             if (value instanceof LiteralNode) {
                 String tempVar = getNextTempVar();
-                tacCode.add(tempVar + " = \"" + ((LiteralNode) value).getValue() + "\"");
-                tacCode.add("call print, " + tempVar);
+                instructions.add(new LoadInstruction(null, RegisterName.R1, ((LiteralNode) value).getValue()));
+                instructions.add(new CallInstruction(null, "print", RegisterName.R1));
+            } else if (value instanceof VariableNode) {
+                String variableName = ((VariableNode) value).getName();
+                instructions.add(new MovInstruction(null, RegisterName.R1, variableName));
+                instructions.add(new CallInstruction(null, "print", RegisterName.R1));
             }
 
         } else if (ast instanceof BinaryOperationNode) {
@@ -31,14 +36,70 @@ public class TACgenerator {
             String operation = binaryOperationNode.getOperator();
 
             if (left instanceof LiteralNode && right instanceof LiteralNode) {
-                String t0 = getNextTempVar();
-                String t1 = getNextTempVar();
-                String t2 = getNextTempVar();
-                int leftValue = Integer.parseInt(((LiteralNode) left).getValue());
-                int rightValue = Integer.parseInt(((LiteralNode) right).getValue());
-                tacCode.add(t0 + " = " +"0x" + Integer.toHexString(leftValue)+ " (" + leftValue+")");
-                tacCode.add(t1 + " = " + "0x"+ Integer.toHexString(rightValue) + " ("+ rightValue+")");
-                tacCode.add(t2 + " = " + t0 +" "+ operation +" "+ t1);
+                RegisterName reg1 = getNextRegister();
+                RegisterName reg2 = getNextRegister();
+                RegisterName regResult = getNextRegister();
+                instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) left).getValue()));
+                instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) right).getValue()));
+
+                switch (operation) {
+                    case "+":
+                        instructions.add(new AddInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "-":
+                        instructions.add(new SubInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "*":
+                        instructions.add(new MulInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "/":
+                        instructions.add(new DivInstruction(null, regResult, reg1, reg2));
+                        break;
+                }
+
+                instructions.add(new MovInstruction(null, "result", regResult));
+                instructions.add(new CallInstruction(null, "print", regResult));
+            }
+        } else if (ast instanceof BinaryAssignNode) {
+            BinaryAssignNode binaryAssignNode = (BinaryAssignNode) ast;
+            VariableAssignmentNode assignOperationOne = binaryAssignNode.getVariableOne();
+            VariableAssignmentNode assignOperationTwo = binaryAssignNode.getVariableTwo();
+            String operation = binaryAssignNode.getOperation();
+            String totalVar = binaryAssignNode.getVariableName();
+            RegisterName reg1 = getNextRegister();
+            RegisterName reg2 = getNextRegister();
+            RegisterName reg3 = getNextRegister();
+            RegisterName reg4 = getNextRegister();
+            RegisterName regResult = getNextRegister();
+
+            if (assignOperationOne != null && assignOperationTwo != null) {
+                ExpressionNode value1 = assignOperationOne.getExpression();
+                ExpressionNode value2 = assignOperationTwo.getExpression();
+                if (value1 instanceof LiteralNode && value2 instanceof LiteralNode) {
+                    instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value1).getValue()));
+                    instructions.add(new StoreInstruction(null, reg1, assignOperationOne.getVariableName()));
+                    instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) value2).getValue()));
+                    instructions.add(new StoreInstruction(null, reg2, assignOperationTwo.getVariableName()));
+                    instructions.add(new MovInstruction(null, reg3, assignOperationOne.getVariableName()));
+                    instructions.add(new MovInstruction(null, reg4, assignOperationTwo.getVariableName()));
+                    switch (operation) {
+                        case "+":
+                            instructions.add(new AddInstruction(null, regResult, reg3, reg4));
+                            break;
+                        case "-":
+                            instructions.add(new SubInstruction(null, regResult, reg3, reg4));
+                            break;
+                        case "*":
+                            instructions.add(new MulInstruction(null, regResult, reg3, reg4));
+                            break;
+                        case "/":
+                            instructions.add(new DivInstruction(null, regResult, reg3, reg4));
+                            break;
+                    }
+
+                    instructions.add(new MovInstruction(null, totalVar, regResult));
+                    instructions.add(new CallInstruction(null, "print", totalVar));
+                }
             }
         } else if (ast instanceof BinaryAssignmentNode) {
             BinaryAssignmentNode binaryAssignmentNode = (BinaryAssignmentNode) ast;
@@ -46,18 +107,32 @@ public class TACgenerator {
             ExpressionNode value = binaryAssignmentNode.getValue();
             ExpressionNode secondValue = binaryAssignmentNode.getSecondValue();
             String operation = binaryAssignmentNode.getOperation();
-            if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
-                String t0 = getNextTempVar();
-                String t1 = getNextTempVar();
-                String t2 = getNextTempVar();
-                int valueNum = Integer.parseInt(((LiteralNode) value).getValue());
-                int secondValueNum = Integer.parseInt(((LiteralNode) secondValue).getValue());
-              //  System.out.println(value + " " + secondValue); - >  using print to check secondValue
-                tacCode.add(variableName + " = " + "0x" + Integer.toHexString(valueNum) + " (" + valueNum + ")");
-                tacCode.add(t0 + " = " + variableName);
-                tacCode.add(t1 + " = " + "0x" + Integer.toHexString(secondValueNum) + " (" + secondValueNum + ")");
-                tacCode.add(t2 + " = " + t0 + " " + operation + " " + t1);
+            RegisterName reg1 = getNextRegister();
+            RegisterName reg2 = getNextRegister();
+            RegisterName regResult = getNextRegister();
 
+            if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
+                instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value).getValue()));
+                instructions.add(new StoreInstruction(null, reg1, variableName));
+                instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) secondValue).getValue()));
+
+                switch (operation) {
+                    case "+":
+                        instructions.add(new AddInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "-":
+                        instructions.add(new SubInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "*":
+                        instructions.add(new MulInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "/":
+                        instructions.add(new DivInstruction(null, regResult, reg1, reg2));
+                        break;
+                }
+
+                instructions.add(new MovInstruction(null, variableName, regResult));
+                instructions.add(new CallInstruction(null, "print", regResult));
             }
         } else if (ast instanceof BinaryVarExtended) {
             BinaryVarExtended binaryVarExtended = (BinaryVarExtended) ast;
@@ -66,50 +141,65 @@ public class TACgenerator {
             ExpressionNode secondValue = binaryVarExtended.getValue2();
             String operation = binaryVarExtended.getOperation();
             String variableName2 = binaryVarExtended.getVariableName2();
-            if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
-                String t0 = getNextTempVar();
-                String t1 = getNextTempVar();
-                String t2 = getNextTempVar();
-                int valueNum = Integer.parseInt(((LiteralNode) value).getValue());
-                int secondValueNum = Integer.parseInt(((LiteralNode) secondValue).getValue());
-                //  System.out.println(value + " " + secondValue); - >  using print to check secondValue
-                tacCode.add(variableName + " = " + "0x" + Integer.toHexString(valueNum) + " (" + valueNum + ")");
-                tacCode.add(variableName2 + " = " + "0x" + Integer.toHexString(secondValueNum) + " (" + secondValueNum + ")");
-                tacCode.add(t0 + " = " + variableName);
-                tacCode.add(t1 + " = " +  variableName2);
-                tacCode.add(t2 + " = " + t0 + " " + operation + " " + t1);
-            }
+            RegisterName reg1 = getNextRegister();
+            RegisterName reg2 = getNextRegister();
+            RegisterName regResult = getNextRegister();
 
-        }
-        else if (ast instanceof LiteralNode) {
+            if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
+                instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value).getValue()));
+                instructions.add(new StoreInstruction(null, reg1, variableName));
+                instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) secondValue).getValue()));
+                instructions.add(new StoreInstruction(null, reg2, variableName2));
+
+                switch (operation) {
+                    case "+":
+                        instructions.add(new AddInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "-":
+                        instructions.add(new SubInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "*":
+                        instructions.add(new MulInstruction(null, regResult, reg1, reg2));
+                        break;
+                    case "/":
+                        instructions.add(new DivInstruction(null, regResult, reg1, reg2));
+                        break;
+                }
+
+                instructions.add(new MovInstruction(null, variableName, regResult));
+                instructions.add(new CallInstruction(null, "print", regResult));
+            }
+        } else if (ast instanceof LiteralNode) {
             String tempVar = getNextTempVar();
-            tacCode.add(tempVar + " = \"" + ((LiteralNode) ast).getValue() + "\"");
+            instructions.add(new LoadInstruction(null, RegisterName.R0, ((LiteralNode) ast).getValue()));
         } else if (ast instanceof PrintVariableNode) {
             PrintVariableNode printNode = (PrintVariableNode) ast;
             String variableName = printNode.getVariableName();
             ExpressionNode value = printNode.getVariableValue();
-           // String printer = printNode.getPrinter();
 
             if (value instanceof LiteralNode) {
-                String tempVar = getNextTempVar();
-                tacCode.add(variableName + " = \"" + ((LiteralNode) value).getValue() + "\"");
-                tacCode.add(tempVar + " = " + variableName);
-                tacCode.add("call print, " + tempVar);
+                instructions.add(new MovInstruction(null, RegisterName.R0, ((LiteralNode) value).getValue()));
+                instructions.add(new CallInstruction(null, "print", RegisterName.R0));
+            } else if (value instanceof VariableNode) {
+                instructions.add(new MovInstruction(null, RegisterName.R0, ((VariableNode) value).getName()));
+                instructions.add(new CallInstruction(null, "print", RegisterName.R0));
             }
-
         } else if (ast instanceof VariableAssignmentNode) {
-            VariableAssignmentNode printNode = (VariableAssignmentNode) ast;
-            String variableName = printNode.getVariableName();
-            ExpressionNode value = printNode.getExpression();
-            if(value instanceof LiteralNode){
-                String tempVar = getNextTempVar();
-                tacCode.add(variableName + " = \"" + ((LiteralNode) value).getValue() + "\"");
-                tacCode.add(tempVar + " = " + variableName);
+            VariableAssignmentNode variableAssignmentNode = (VariableAssignmentNode) ast;
+            String variableName = variableAssignmentNode.getVariableName();
+            ExpressionNode value = variableAssignmentNode.getExpression();
+            RegisterName reg = getNextRegister();
 
+            if (value instanceof LiteralNode) {
+                instructions.add(new LoadInstruction(null, reg, ((LiteralNode) value).getValue()));
+                instructions.add(new StoreInstruction(null, reg, variableName));
             }
-
         }
 
-        return tacCode;
+        return instructions;
+    }
+
+    private RegisterName getNextRegister() {
+        return RegisterName.values()[tempVarCounter++ % RegisterName.values().length];
     }
 }

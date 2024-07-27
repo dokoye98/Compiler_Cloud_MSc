@@ -13,25 +13,18 @@ public class LoadInstruction extends Instruction {
     }
 
     @Override
-    public int execute(Machine machine) {
-        if (value.startsWith("\"") && value.endsWith("\"")) {
-            machine.setRegister(register, value.substring(1, value.length() - 1));
+    public int execute(VM vm) {
+
+        if (value.matches("-?\\d+")) { // Check if value is a number
+            vm.setRegister(register, Integer.parseInt(value));
         } else {
-            try {
-
-                machine.setRegister(register, Integer.parseInt(value));
-            } catch (NumberFormatException e) {
-                // Honestly error handling this was the error that kept popping up then
-                String memoryValue = (String) machine.getVariableSingle(value);
-                if (memoryValue != null) {
-
-                    machine.setVariable(memoryValue,register);
-                } else {
-                    throw new IllegalArgumentException("Unknown variable: " + value);
-                }
+            Object varValue = vm.getVariable(value);
+            if (varValue == null) {
+                throw new IllegalArgumentException("Unknown variable: " + value);
             }
+            vm.setRegister(register, (Integer) varValue);
         }
-        return machine.getProgramCounter() + 1;
+        return vm.getProgramCounter() + 1;
     }
 
     @Override

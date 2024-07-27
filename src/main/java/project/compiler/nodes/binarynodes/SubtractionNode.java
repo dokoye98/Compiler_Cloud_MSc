@@ -17,6 +17,6 @@ public class SubtractionNode extends BinaryOperationNode {
 
     @Override
     public String toString() {
-        return "Subtraction(" + getOperator() + "): " + getType() + "\n  |\n  --- " + getLeft() + "\n  --- " + getRight();
+        return getClass().getSimpleName()+"(" + getOperator() + "): " + getType() + "\n  |\n  --- " + getLeft() + "\n  --- " + getRight();
     }
 }

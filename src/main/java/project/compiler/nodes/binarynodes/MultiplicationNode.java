@@ -12,6 +12,6 @@ public class MultiplicationNode extends BinaryOperationNode {
 
     @Override
     public String toString() {
-        return "MultiplicationNode(" + getOperator() + "): " + getType() + "\n  |\n  *-- " + getLeft() + "\n  *-- " + getRight();
+        return getClass().getSimpleName()+"(" + getOperator() + "): " + getType() + "\n  |\n  --- " + getLeft() + "\n  --- " + getRight();
     }
 }

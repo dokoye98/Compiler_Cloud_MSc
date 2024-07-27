@@ -151,15 +151,29 @@ public class TokenTest {
 
 
 @Test
-    public void variableBinaryTest()
-    {String code = "a =12; b = 22; a + b";
+    public void variableBinaryTest() {
+        String code = "a =12; b = 22; a + b";
     Lexicon lexer = new Lexicon(code);
     lexer.splitter();
     List<Token> tokens = lexer.getTokens();
         System.out.println(tokens);
     System.out.println(tokens.size());
 }
-
+@Test
+    public void varAddVarTest(){
+    String code = "a = 12; b = 88; c = a + b; print c";
+    Lexicon lexer = new Lexicon(code);
+    lexer.splitter();
+    List<Token> tokens = lexer.getTokens();
+    System.out.println(tokens.size());
+    String var1 = tokens.get(0).getValue();
+    String var2 = tokens.get(3).getValue();
+    String var3 = tokens.get(6).getValue();
+    String var4 = tokens.get(8).getValue();
+    String var5 = tokens.get(10).getValue();
+    System.out.println(var1+ " "+ var2+ " "+var3+" "+ var4+" "+ var5);
+    System.out.println(tokens.get(9).getValue());
+}
 
 
 }

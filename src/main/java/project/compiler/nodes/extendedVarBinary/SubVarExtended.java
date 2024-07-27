@@ -1,4 +1,4 @@
-package project.compiler.nodes.binarynodes;
+package project.compiler.nodes.extendedVarBinary;
 
 import project.compiler.nodes.BinaryVarExtended;
 import project.compiler.nodes.ExpressionNode;

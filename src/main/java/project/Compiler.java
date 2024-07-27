@@ -1,14 +1,15 @@
 package project;
 
 import project.compiler.assemblyInstructions.AssemblyGenerator;
-import project.vm.codegen.CodeGenerator;
-import project.vm.codegen.Instruction;
-import project.vm.codegen.Machine;
+import project.compiler.intercode.TACVisual;
+import project.compiler.intercode.TACgenerator;
 import project.compiler.lexer.Lexicon;
 import project.compiler.nodes.Node;
+import project.compiler.semantic.SemanticTree;
 import project.compiler.syntaxtree.Parser;
-import project.compiler.intercode.TACgenerator;
 import project.compiler.tokens.Token;
+import project.vm.codegen.Instruction;
+import project.vm.codegen.VM;
 
 import java.util.List;
 import java.util.Scanner;
@@ -38,24 +39,19 @@ public class Compiler {
            try{
                Node ast = parser.parse();
                parser.printAST(ast);
-               parser.analyzeSemantic(ast);
-               //System.out.println(ast.getClass());
-               TACgenerator tac = new TACgenerator();
-               List<String> tacCode = tac.generateTAC(ast);
-               for(String line: tacCode){
-                   System.out.println(line);
-               }
-               CodeGenerator generator = new CodeGenerator();
-               List<Instruction> instructions = generator.generateCode(ast);
+               SemanticTree.analyzeSemantic(ast);
+               TACVisual tacVisual = new TACVisual();
+               TACgenerator tacGenerator = new TACgenerator();
 
-               for (Instruction instruction : instructions) {
-                  // System.out.println("check");
-                   System.out.println(instruction);
+               List<String> tac = tacVisual.generateTAC(ast);
+               for(String process: tac){
+                   System.out.println(process);
                }
+              List<Instruction> instructions = tacGenerator.generateCode(ast);
+               VM vm = new VM(instructions);
+               vm.execute();
+                vm.printState();
 
-               Machine machine = new Machine();
-               machine.execute(instructions);
-               machine.machineValues();
                System.out.println("Assembly Code here:\n");
                System.out.println(AssemblyGenerator.assemble(ast));
            } catch (Exception e) {

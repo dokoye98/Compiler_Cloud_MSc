@@ -1,4 +1,4 @@
-package project.compiler.nodes.binarynodes;
+package project.compiler.nodes.varBinaryNode;
 
 import project.compiler.nodes.BinaryAssignmentNode;
 import project.compiler.nodes.ExpressionNode;
@@ -12,6 +12,6 @@ public class AddVariableNode extends BinaryAssignmentNode {
 
     @Override
     public String toString() {
-        return "AddVariableNode(" + getOperation() + "): " + getType() + "\n  |\n  +-- Variable(" + getVariableName() + ")\n  +-- " + getValue() + "\n  +-- " + getSecondValue();
+        return getClass().getSimpleName()+"(" + getOperation() + "): " + getType() + "\n  |\n  +-- Variable(" + getVariableName() + ")\n  +-- " + getValue() + "\n  +-- " + getSecondValue();
     }
 }

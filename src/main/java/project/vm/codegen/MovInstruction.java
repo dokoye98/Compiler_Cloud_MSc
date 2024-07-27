@@ -11,19 +11,21 @@ public class MovInstruction extends Instruction{
     }
 
     @Override
-    public int execute(Machine machine) {
+    public int execute(VM vm) {
        // Object value;
      if(endPoint instanceof RegisterName){
          RegisterName register = (RegisterName) endPoint;
-         int varValue = (int) machine.getVariableSingle((String) source);
-          machine.setRegister(register,varValue);
-     } else if (source instanceof RegisterName) {
+         int varValue = (int) vm.getVariable((String) source);
+          vm.setRegister(register,varValue);
+     } else if (endPoint instanceof String) {
         // RegisterName register = (RegisterName) source;
-         int varValue = (int) machine.getVariableSingle((String) endPoint);
-         machine.setVariable((String)endPoint,varValue);
+         int varValue = (int) vm.getRegister((RegisterName) source);
+         vm.setVariable((String)endPoint,varValue);
 
+     } else {
+         throw new IllegalArgumentException("Unknown end point type.");
      }
-        return machine.getProgramCounter() + 1;
+        return vm.getProgramCounter() + 1;
     }
 
     @Override

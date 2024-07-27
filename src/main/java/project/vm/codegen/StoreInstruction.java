@@ -12,10 +12,10 @@ public class StoreInstruction extends Instruction{
     }
 
     @Override
-    public int execute(Machine machine) {
-      Object value = machine.getRegister(register);
-      machine.setVariable(variableName,value);
-      return machine.getProgramCounter() + 1;
+    public int execute(VM vm) {
+        Integer value = (Integer) vm.getRegister(register);
+        vm.setVariable(variableName, value);
+        return vm.getProgramCounter() + 1;
 
     }
 

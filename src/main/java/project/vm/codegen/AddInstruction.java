@@ -15,14 +15,12 @@ public class AddInstruction extends Instruction{
     }
 
     @Override
-    public int execute(Machine machine) {
-        //System.out.println(machine.getRegister(operand1)+ " "+ machine.getRegister(operand2));
-        int value = (int) machine.getRegister(operand1);
-        int value1 = (int) machine.getRegister(operand2);
-        //int hex = value1 + value;
-       machine.setRegister(result,value+value1);
+    public int execute(VM vm) {
+        int value = (int) vm.getRegister(operand1);
+        int value1 = (int) vm.getRegister(operand2);
+        vm.setRegister(result,value+value1);
+        return vm.getProgramCounter() + 1;
 
-       return machine.getProgramCounter() + 1;
     }
 
     @Override

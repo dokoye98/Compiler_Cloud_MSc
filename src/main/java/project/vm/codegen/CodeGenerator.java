@@ -40,7 +40,17 @@ public class CodeGenerator {
                 instructions.add(new LoadInstruction(null, register, variableNode.getName()));
                 instructions.add(new CallInstruction(null, "print", register));
             }
-        } else if (ast instanceof BinaryOperationNode) {
+        } /*else if(ast instanceof BinaryAssignNode){
+             BinaryAssignNode binaryAssignNode = (BinaryAssignNode) ast;
+             String operator = binaryAssignNode.getOperation();
+
+             instructions.add(new LoadInstruction(null, RegisterName.R0, ((LiteralNode) binaryAssignNode.getValue()).getValue()));
+             instructions.add(new LoadInstruction(null, RegisterName.R1, ((LiteralNode) binaryAssignNode.getSecondValue()).getValue()));
+             instructions.add(new AddInstruction(null,RegisterName.R2,RegisterName.R0,RegisterName.R1));
+             instructions.add(new MovInstruction(null,binaryAssignNode.getVariableName(),RegisterName.R2));
+            // instructions.add(new CallInstruction(null, "print", ));
+         }*/
+         else if (ast instanceof BinaryOperationNode) {
              BinaryOperationNode binaryOperationNode = (BinaryOperationNode) ast;
              String operator = binaryOperationNode.getOperator();
 

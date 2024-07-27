@@ -2,72 +2,124 @@ package project.compiler.syntaxtree;
 
 import project.compiler.lexer.OperatorCheck;
 import project.compiler.nodes.*;
-import project.compiler.nodes.binarynodes.*;
+import project.compiler.nodes.binaryVarsEqual.AddVarEquals;
+import project.compiler.nodes.binaryVarsEqual.DivVarEquals;
+import project.compiler.nodes.binaryVarsEqual.MulVarEquals;
+import project.compiler.nodes.binaryVarsEqual.SubVarEquals;
+import project.compiler.nodes.binarynodes.AdditionNode;
+import project.compiler.nodes.binarynodes.DivideNode;
+import project.compiler.nodes.binarynodes.MultiplicationNode;
+import project.compiler.nodes.binarynodes.SubtractionNode;
+import project.compiler.nodes.extendedVarBinary.AddVarExtended;
+import project.compiler.nodes.extendedVarBinary.DivVarExtended;
+import project.compiler.nodes.extendedVarBinary.MulVarExtended;
+import project.compiler.nodes.extendedVarBinary.SubVarExtended;
+import project.compiler.nodes.varBinaryNode.AddVariableNode;
+import project.compiler.nodes.varBinaryNode.DivVariableNode;
+import project.compiler.nodes.varBinaryNode.MulVariableNode;
+import project.compiler.nodes.varBinaryNode.SubVariableNode;
 import project.compiler.tokens.Token;
 import project.compiler.tokens.TokenCheck;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class Parser {
     public List<Token> tokens;
-    public int currentPlace = 0;
-    private Set<String> definedVariables = new HashSet<>();
+
+
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
 
-    public Node parse() throws Exception {
+    public Node parse() {
         Node ast;
         try {
+            System.out.println("Starting parse process with tokens:");
+            // tokens.forEach(System.out::println);
             if (tokens.get(0).getKey() == TokenCheck.PRINT && tokens.size() == 2) {
-                    ExpressionNode expression = new LiteralNode(tokens.get(1).getValue());
-                    ast = new PrintStatementNode(expression);
-            }else if(tokens.get(0).getKey() == TokenCheck.VARIABLE && tokens.size() == 3){
+                ExpressionNode expression = new LiteralNode(tokens.get(1).getValue());
+                ast = new PrintStatementNode(expression);
+            } else if (tokens.get(0).getKey() == TokenCheck.VARIABLE && tokens.size() == 3) {
                 String variableName = tokens.get(0).getValue();
                 ExpressionNode expression = new LiteralNode(tokens.get(2).getValue());
-                ast = new VariableAssignmentNode(variableName,expression);
-            }else if (tokens.get(1).getKey() == TokenCheck.VAR_ASSIGN && tokens.get(4).getKey() == TokenCheck.VAR_ASSIGN) {
+                ast = new VariableAssignmentNode(variableName, expression);
+            } else if (tokens.size() == 13) {
+                String var1 = tokens.get(0).getValue();
+                String var2 = tokens.get(3).getValue();
+                String var4 = tokens.get(8).getValue();
+                String varTotal = tokens.get(6).getValue();
+                String var5 = tokens.get(10).getValue();
+                ExpressionNode value1 = new LiteralNode(tokens.get(2).getValue());
+                ExpressionNode value2 = new LiteralNode(tokens.get(5).getValue());
+                VariableAssignmentNode assignmentNode = new VariableAssignmentNode(var1, value1);
+                VariableAssignmentNode assignmentNode2 = new VariableAssignmentNode(var2, value2);
+               // System.out.println("Here is the end goal:   "+varTotal); due to tac generation
+                if (Objects.equals(var1, var4) && Objects.equals(var2, var5)) {
+                    switch (tokens.get(9).getValue()) {
+                        case "+":
+                            ast = new AddVarEquals("+", varTotal, assignmentNode, assignmentNode2);
+                            //System.out.println("works");
+                            break;
+                        case "/":
+                            ast = new DivVarEquals("/", varTotal, assignmentNode, assignmentNode2);
+                            break;
+                        case "*":
+                            ast = new MulVarEquals("*", varTotal, assignmentNode, assignmentNode2);
+                            break;
+                        case "-":
+                            ast = new SubVarEquals("-", varTotal, assignmentNode, assignmentNode2);
+                            System.out.println("check here please");
+                            break;
+                        default:
+                            ast = new UnknownNode("Unknown operator");
+                            //System.out.println("There is an error here");
+                    }
+                } else {
+                    ast = new UnknownNode("Invalid variable used");
+                    // System.out.println("Invalid variable HERE");
+                }
+            } else if (tokens.get(1).getKey() == TokenCheck.VAR_ASSIGN && tokens.get(4).getKey() == TokenCheck.VAR_ASSIGN) {
                 String variableName1 = tokens.get(0).getValue();
                 ExpressionNode value1 = new LiteralNode(tokens.get(2).getValue());
                 VariableAssignmentNode varAssign1 = new VariableAssignmentNode(variableName1, value1);
                 String variableName2 = tokens.get(3).getValue();
                 ExpressionNode value2 = new LiteralNode(tokens.get(5).getValue());
                 VariableAssignmentNode varAssign2 = new VariableAssignmentNode(variableName2, value2);
-                    String variableNameRepeat = tokens.get(6).getValue();
-                    String variableName2Repeat = tokens.get(8).getValue();
+                System.out.println(varAssign1);
+                System.out.println(varAssign2);
+                String variableNameRepeat = tokens.get(6).getValue();
+                String variableName2Repeat = tokens.get(8).getValue();
 
-                    if (Objects.equals(variableName1, variableNameRepeat) && Objects.equals(variableName2, variableName2Repeat)) {
-                        switch (tokens.get(7).getValue()) {
-                            case "+":
-                                ast = new AddVarExtended(variableName1,variableName2,value1,value2,"+");
-                                break;
-                            case "/":
-                                ast = new DivVarExtended(variableName1,variableName2,value1,value2,"/");
-                                break;
-                            case "*":
-                                ast = new MulVarExtended(variableName1,variableName2,value1,value2,"*");
-                                break;
-                            case "-":
-                                ast = new SubVarExtended(variableName1,variableName2,value1,value2,"-");
-                                break;
-                            default:
-                                ast = new UnknownNode("Unknown operation");
-                        }
-                    } else {
-                        ast = new UnknownNode("Invalid variable used");
+                if (Objects.equals(variableName1, variableNameRepeat) && Objects.equals(variableName2, variableName2Repeat)) {
+                    switch (tokens.get(7).getValue()) {
+                        case "+":
+                            ast = new AddVarExtended(variableName1, variableName2, value1, value2, "+");
+                            break;
+                        case "/":
+                            ast = new DivVarExtended(variableName1, variableName2, value1, value2, "/");
+                            break;
+                        case "*":
+                            ast = new MulVarExtended(variableName1, variableName2, value1, value2, "*");
+                            break;
+                        case "-":
+                            ast = new SubVarExtended(variableName1, variableName2, value1, value2, "-");
+                            break;
+                        default:
+                            ast = new UnknownNode("Unknown operation");
+                    }
+                } else {
+                    ast = new UnknownNode("Invalid variable used");
 
                 }
-            }else if(tokens.get(0).getKey() == TokenCheck.NUM_VAR && tokens.size() == 6){
+            } else if (tokens.get(0).getKey() == TokenCheck.NUM_VAR && tokens.size() == 6) {
                 String variableName = tokens.get(0).getValue();
                 ExpressionNode value = new LiteralNode(tokens.get(2).getValue());
                 String variableName2 = tokens.get(3).getValue();
                 ExpressionNode secondValue = new LiteralNode(tokens.get(5).getValue());
-                if(Objects.equals(variableName, variableName2)) {
+                if (Objects.equals(variableName, variableName2)) {
 
-                    switch (tokens.get(4).getValue()){
+                    switch (tokens.get(4).getValue()) {
                         case "+":
                             ast = new AddVariableNode(variableName, value, "+", secondValue, variableName2);
                             break;
@@ -84,123 +136,60 @@ public class Parser {
                             ast = new UnknownNode("Invalid operation");
                     }
 
-                }else{
+                } else {
                     ast = new UnknownNode("Invalid variable");
                 }
-            }
-            else if(OperatorCheck.isBasicBinaryList(tokens) && tokens.size() ==3){
+            } else if (OperatorCheck.isBasicBinaryList(tokens) && tokens.size() == 3) {
                 ExpressionNode left = new LiteralNode(tokens.get(0).getValue());
                 ExpressionNode right = new LiteralNode(tokens.get(2).getValue());
 
-                switch (tokens.get(1).getValue()){
+                switch (tokens.get(1).getValue()) {
 
                     case "-":
-                        ast = new SubtractionNode( left,"-", right);
+                        ast = new SubtractionNode(left, "-", right);
                         break;
                     case "+":
-                        ast = new AdditionNode( left,"+", right);
+                        ast = new AdditionNode(left, "+", right);
                         break;
                     case "*":
-                        ast = new MultiplicationNode( left,"*", right);
+                        ast = new MultiplicationNode(left, "*", right);
                         break;
                     case "/":
-                        ast = new DivideNode( left,"/", right);
+                        ast = new DivideNode(left, "/", right);
                         break;
                     default:
                         ast = new UnknownNode("Unknown operation");
                 }
-
-
-
-
-            }else if( tokens.get(0).getKey() == TokenCheck.VARIABLE && tokens.size() == 5 ) {
+            } else if (tokens.get(0).getKey() == TokenCheck.VARIABLE && tokens.size() == 5) {
                 System.out.println("check");
                 String variableName = tokens.get(0).getValue();
                 ExpressionNode value = new LiteralNode(tokens.get(2).getValue());
                 String var = tokens.get(4).getValue();
                 String functionCall = tokens.get(3).getValue() + " " + var;
 
-            if (!Objects.equals(var, variableName)) {
+                if (!Objects.equals(var, variableName)) {
                     ast = new UnknownNode("Unknown Token: incorrect variable");
                 } else {
-                    ast = new PrintVariableNode(variableName, value,functionCall);
+                    ast = new PrintVariableNode(variableName, value, functionCall);
                 }
+            } else {
+                ast = new UnknownNode("Unknown Token: " + tokens.get(0).getValue());
             }
-            else {
-                ast =  new UnknownNode("Unknown Token: " + tokens.get(0).getValue());
-            }
-        }catch (Exception e){
+        } catch (Exception e) {
             ast = new UnknownNode(e.getMessage());
         }
-        //System.out.println("AST before optimization: " + ast);
-
-        //ast = OptimizedAST.optimize(ast);
-        analyzeSemantic(ast);
+        //System.out.println("AST before optimization: " + ast);->Not needed
+        //ast = OptimizedAST.optimize(ast); -> this removes the teaching property
+        //analyzeSemantic(ast); - removed due to repetition
         return ast;
     }
 
-    public void printAST(Node ast) throws Exception {
+    public void printAST(Node ast) {
 
-        System.out.println("AST after optimization: " + ast);
+        System.out.println(ast);
 
     }
-    public void analyzeSemantic(Node ast)throws Exception {
-       // System.out.println("Analyzing semantics for AST: " + ast);
-        if(ast instanceof BinaryVarExtended){
-            BinaryVarExtended binaryVarExtended = (BinaryVarExtended) ast;
-            ExpressionNode value = ((BinaryVarExtended) ast).getExpression();
-            ExpressionNode secondValue = ((BinaryVarExtended) ast).getValue2();
-            if (!(value instanceof LiteralNode && secondValue instanceof LiteralNode)) {
-                throw new Exception("Invalid value");
-            }
 
-        }
 
-        else if(ast instanceof BinaryAssignmentNode){
-            ExpressionNode value = ((BinaryAssignmentNode) ast).getValue();
-            ExpressionNode secondValue = ((BinaryAssignmentNode) ast).getSecondValue();
-            if (!(value instanceof LiteralNode && secondValue instanceof LiteralNode)) {
-                throw new Exception("Invalid value");
-            }
-        }
-        else if (ast instanceof PrintStatementNode) {
-            ExpressionNode expression = ((PrintStatementNode) ast).getExpression();
-            checkExpression(expression);
-        } else if(ast instanceof VariableAssignmentNode){
-            String variableName = ((VariableAssignmentNode) ast).getVariableName();
-            ExpressionNode expression  = ((VariableAssignmentNode)ast).getExpression();
-        }else if(ast instanceof BinaryOperationNode) {
-            ExpressionNode left = ((BinaryOperationNode) ast).getLeft();
-            ExpressionNode right = ((BinaryOperationNode) ast).getRight();
-            if (!(left instanceof LiteralNode && right instanceof LiteralNode)) {
-                throw new Exception("As of this iteration both operands must be literals");
-            }
-
-        }
-        else if(ast instanceof PrintVariableNode){
-        //nothing needed as literal doesnt need process
-        }
-
-        else if(ast instanceof LiteralNode){
-        //nothing needed as literal doesnt need process
-        }
-        else if(ast instanceof UnknownNode){
-            throw new Exception(((UnknownNode) ast).getErrorMessage());
-        }else{
-            throw new Exception("Unrecognised AST Node");
-        }
-    }
-    private void checkExpression(ExpressionNode expression) throws Exception{
-        if(expression instanceof LiteralNode){
-
-        }else if(expression instanceof VariableNode){
-            String variableName = ((VariableNode) expression).getName();
-            if (!definedVariables.contains(variableName)) {
-                throw new Exception("Undefined variable: " + variableName);
-            }
-        }else{
-            throw new Exception("Unrecognised expression");
-        }
-    }
 
 }

@@ -10,14 +10,14 @@ public abstract class Instruction {
     }
 
     public String getLabel() {
-        return label;
+        return (label != null ? label + ": " : "");
     }
 
     public String getOpcode() {
         return opcode;
     }
 
-    public abstract int execute(Machine machine);
+    public abstract int execute(VM machine);
 
     public String getLabelString() {
         return (getLabel() == null) ? "" : getLabel() + ": ";

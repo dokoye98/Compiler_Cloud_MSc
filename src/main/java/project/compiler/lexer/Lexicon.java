@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 public class Lexicon {
 
 
-    private String input;
-    private List<Token> tokens;
+    private final String input;
+    private final List<Token> tokens;
 
     public Lexicon(String input) {
         this.input = input;
@@ -38,7 +38,45 @@ public class Lexicon {
             if (match.matches()) {
                 matched = true;
 
-                if (type == TokenCheck.VARIABLE_ASSIGN && match.groupCount() == 2) {
+                if (type == TokenCheck.NUM_VAR_ADD && match.groupCount() == 3) {
+                    String variableTotal = match.group(1);
+                    String variableOne = match.group(2);
+                    String variableTwo = match.group(3);
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTotal));
+                    tokens.add(new Token(TokenCheck.VAR_ASSIGN, "="));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableOne));
+                    tokens.add(new Token(VarAssignOperation.getVarOperation(type), VarAssignOperation.getOperatorSymbol(type)));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTwo));
+                }else  if (type == TokenCheck.NUM_VAR_SUB && match.groupCount() == 3) {
+                    String variableTotal = match.group(1);
+                    String variableOne = match.group(2);
+                    String variableTwo = match.group(3);
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTotal));
+                    tokens.add(new Token(TokenCheck.VAR_ASSIGN, "="));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableOne));
+                    tokens.add(new Token(VarAssignOperation.getVarOperation(type), VarAssignOperation.getOperatorSymbol(type)));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTwo));
+                }
+                else if (type == TokenCheck.NUM_VAR_DIV && match.groupCount() == 3) {
+                    String variableTotal = match.group(1);
+                    String variableOne = match.group(2);
+                    String variableTwo = match.group(3);
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTotal));
+                    tokens.add(new Token(TokenCheck.VAR_ASSIGN, "="));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableOne));
+                    tokens.add(new Token(VarAssignOperation.getVarOperation(type), VarAssignOperation.getOperatorSymbol(type)));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTwo));
+                }
+                else if (type == TokenCheck.NUM_VAR_MUL && match.groupCount() == 3) {
+                    String variableTotal = match.group(1);
+                    String variableOne = match.group(2);
+                    String variableTwo = match.group(3);
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTotal));
+                    tokens.add(new Token(TokenCheck.VAR_ASSIGN, "="));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableOne));
+                    tokens.add(new Token(VarAssignOperation.getVarOperation(type), VarAssignOperation.getOperatorSymbol(type)));
+                    tokens.add(new Token(TokenCheck.NUM_VAR, variableTwo));
+                }else if (type == TokenCheck.VARIABLE_ASSIGN && match.groupCount() == 2) {
                     String variableName = match.group(1);
                     String literalValue = match.group(2);
                     tokens.add(new Token(TokenCheck.VARIABLE, variableName));
@@ -55,56 +93,20 @@ public class Lexicon {
                     tokens.add(new Token(TokenCheck.NUM_VAR, functionCall));
                     tokens.add(new Token(TokenCheck.VAR_ASSIGN, "="));
                     tokens.add(new Token(TokenCheck.LITERAL, variableName));
-                } else if (type == TokenCheck.VAR_ADD && match.groupCount() == 2) {
-                    String functionCall = match.group(1);
-                    String variableName = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_ADD, functionCall));
-                    tokens.add(new Token(TokenCheck.ADDITION, "+"));
-                    tokens.add(new Token(TokenCheck.LITERAL, variableName));
-                } else if (type == TokenCheck.VAR_ADD_VAR && match.groupCount() == 2) {
-                    String variableName = match.group(1);
-                    String variableName2 = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_ADD_VAR, variableName));
-                    tokens.add(new Token(TokenCheck.ADDITION, "+"));
-                    tokens.add(new Token(TokenCheck.VAR_ADD_VAR, variableName2));
-                }else if (type == TokenCheck.VAR_DIV_VAR && match.groupCount() == 2) {
-                    String variableName = match.group(1);
-                    String variableName2 = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_DIV_VAR, variableName));
-                    tokens.add(new Token(TokenCheck.DIVIDE, "/"));
-                    tokens.add(new Token(TokenCheck.VAR_DIV_VAR, variableName2));
-                }else if (type == TokenCheck.VAR_SUB_VAR && match.groupCount() == 2) {
-                    String variableName = match.group(1);
-                    String variableName2 = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_SUB_VAR, variableName));
-                    tokens.add(new Token(TokenCheck.SUBTRACTION, "-"));
-                    tokens.add(new Token(TokenCheck.VAR_SUB_VAR, variableName2));
-                }else if (type == TokenCheck.VAR_MUL_VAR && match.groupCount() == 2) {
-                    String variableName = match.group(1);
-                    String variableName2 = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_MUL_VAR, variableName));
-                    tokens.add(new Token(TokenCheck.MULTIPLICATION, "*"));
-                    tokens.add(new Token(TokenCheck.VAR_MUL_VAR, variableName2));
                 }
-                else if (type == TokenCheck.VAR_SUB && match.groupCount() == 2) {
-                    String functionCall = match.group(1);
-                    String variableName = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_SUB, functionCall));
-                    tokens.add(new Token(TokenCheck.SUBTRACTION, "-"));
-                    tokens.add(new Token(TokenCheck.LITERAL, variableName));
+
+                else if (VarOperationCheckExtended.isBinaryVar(type)) {
+                    String variableName = match.group(1);
+                    String variableName2 = match.group(2);
+                    tokens.add(new Token(VarOperationCheckExtended.getVarKey(type), variableName));
+                    tokens.add(new Token(VarOperationCheckExtended.getVarOperation(type), VarOperationCheckExtended.getOperatorSymbol(type)));
+                    tokens.add(new Token(VarOperationCheckExtended.getVarKey(type), variableName2));
                 }
-                else if (type == TokenCheck.VAR_MUL && match.groupCount() == 2) {
-                    String functionCall = match.group(1);
+                else if (VarOperationCheck.isBinaryVar(type) && match.groupCount() == 2) {
+                   String varName = match.group(1);
                     String variableName = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_MUL, functionCall));
-                    tokens.add(new Token(TokenCheck.MULTIPLICATION, "*"));
-                    tokens.add(new Token(TokenCheck.LITERAL, variableName));
-                }
-                else if (type == TokenCheck.VAR_DIV && match.groupCount() == 2) {
-                    String functionCall = match.group(1);
-                    String variableName = match.group(2);
-                    tokens.add(new Token(TokenCheck.VAR_DIV, functionCall));
-                    tokens.add(new Token(TokenCheck.DIVIDE, "/"));
+                    tokens.add(new Token(VarOperationCheck.getVarKey(type), varName));
+                    tokens.add(new Token(VarOperationCheck.getVarOperation(type), VarOperationCheck.getOperatorSymbol(type)));
                     tokens.add(new Token(TokenCheck.LITERAL, variableName));
                 }
                 else if (type == TokenCheck.PRINT && match.groupCount() == 2) {

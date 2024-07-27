@@ -2,24 +2,23 @@ package project.compiler.lexer;
 
 import project.compiler.tokens.TokenCheck;
 
-public class VarOperationCheck {
-
+public class VarAssignOperation {
 
     public static boolean isBinaryVar(TokenCheck type) {
-        return type == TokenCheck.VAR_DIV || type == TokenCheck.VAR_MUL ||
-                type == TokenCheck.VAR_ADD || type == TokenCheck.VAR_SUB;
+        return type == TokenCheck.VAR_DIV_VAR || type == TokenCheck.VAR_MUL_VAR ||
+                type == TokenCheck.VAR_ADD_VAR || type == TokenCheck.VAR_SUB_VAR;
     }
 
     public static TokenCheck getVarKey(TokenCheck type) {
         switch (type) {
-            case VAR_ADD:
-                return TokenCheck.VAR_ADD;
-            case VAR_SUB:
-                return TokenCheck.VAR_SUB;
-            case VAR_MUL:
-                return TokenCheck.VAR_MUL;
-            case VAR_DIV:
-                return TokenCheck.VAR_DIV;
+            case NUM_VAR_ADD:
+                return TokenCheck.NUM_VAR_ADD;
+            case NUM_VAR_SUB:
+                return TokenCheck.NUM_VAR_SUB;
+            case NUM_VAR_MUL:
+                return TokenCheck.NUM_VAR_MUL;
+            case NUM_VAR_DIV:
+                return TokenCheck.NUM_VAR_ADD;
             default:
                 throw new IllegalArgumentException("Unknown operation type");
         }
@@ -27,13 +26,13 @@ public class VarOperationCheck {
 
     public static TokenCheck getVarOperation(TokenCheck type) {
         switch (type) {
-            case VAR_ADD:
+            case NUM_VAR_ADD:
                 return TokenCheck.ADDITION;
-            case VAR_SUB:
+            case NUM_VAR_SUB:
                 return TokenCheck.SUBTRACTION;
-            case VAR_MUL:
+            case NUM_VAR_MUL:
                 return TokenCheck.MULTIPLICATION;
-            case VAR_DIV:
+            case NUM_VAR_DIV:
                 return TokenCheck.DIVIDE;
             default:
                 throw new IllegalArgumentException("Unknown operation type");
@@ -42,13 +41,13 @@ public class VarOperationCheck {
 
     public static String getOperatorSymbol(TokenCheck type) {
         switch (type) {
-            case VAR_ADD:
+            case NUM_VAR_ADD:
                 return "+";
-            case VAR_SUB:
+            case NUM_VAR_SUB:
                 return "-";
-            case VAR_MUL:
+            case NUM_VAR_MUL:
                 return "*";
-            case VAR_DIV:
+            case NUM_VAR_DIV:
                 return "/";
             default:
                 throw new IllegalArgumentException("Unknown operation type");

@@ -12,6 +12,6 @@ public class DivideNode extends BinaryOperationNode {
 
     @Override
     public String toString() {
-        return "DivideNode(" + getOperator() + "): " + getType() + "\n  |\n  --- " + getLeft() + "\n  --- " + getRight();
+        return getClass().getSimpleName()+"(" + getOperator() + "): " + getType() + "\n  |\n  --- " + getLeft() + "\n  --- " + getRight();
     }
 }
