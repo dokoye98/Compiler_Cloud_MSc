@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class VM {
     private final List<Instruction> instructions;
-    private final Map<String, Integer> variables = new HashMap<>();
-    private final Map<RegisterName, Integer> registers = new HashMap<>();
+    private final Map<String, Object> variables = new HashMap<>();
+    private final Map<RegisterName, Object> registers = new HashMap<>();
     private int programCounter = 0;
     private int[] memory;
     private int memoryCounter = 0;
@@ -31,19 +31,17 @@ public class VM {
         return programCounter;
     }
 
-    public void setProgramCounter(int programCounter) {
-        this.programCounter = programCounter;
-    }
+
 
     public Object getRegister(RegisterName register) {
         return registers.get(register);
     }
 
-    public void setRegister(RegisterName register, Integer value) {
+    public void setRegister(RegisterName register, Object value) {
         registers.put(register, value);
     }
 
-    public void setVariable(String variableName, Integer value) {
+    public void setVariable(String variableName, Object value) {
         variables.put(variableName, value);
     }
 
@@ -54,9 +52,9 @@ public class VM {
     public void execute() {
         while (programCounter < instructions.size()) {
             Instruction instruction = instructions.get(programCounter);
-            System.out.println(instruction); // Debugging output
+            System.out.println(instruction);
             programCounter = instruction.execute(this);
-            //printState(); // Debugging output
+            //printState(); annoyingly clunky
         }
     }
 

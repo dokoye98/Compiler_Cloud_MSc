@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LineCheckTest {
 
     @Test
-    public void emptyString() {
+    public void emptyStringTest() {
         String input = "";
         List<String> result = LineCheck.lineChecker(input);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void singleLine() {
+    public void singleLineTest() {
         String input = " fluffy dogs are happy";
         List<String> result = LineCheck.lineChecker(input);
         //System.out.println(result);
@@ -27,7 +27,7 @@ public class LineCheckTest {
     }
 
     @Test
-    public void multipleLines() {
+    public void lineLengthTest() {
         String input = "Batman beats captain america;who knows";
         List<String> result = LineCheck.lineChecker(input);
         //System.out.println(result);
@@ -37,7 +37,7 @@ public class LineCheckTest {
     }
 
     @Test
-    public void getsRidOfSpace() {
+    public void whitespaceTest() {
         String input = "  first line  ;  second line  ";
         List<String> result = LineCheck.lineChecker(input);
         //System.out.println(result);
@@ -47,7 +47,7 @@ public class LineCheckTest {
     }
 
     @Test
-    public void stringSemiColon() {
+    public void onlySemiColonTest() {
         String input = ";;;   ;;;";
         List<String> result = LineCheck.lineChecker(input);
         //System.out.println(result);
@@ -55,7 +55,7 @@ public class LineCheckTest {
     }
 
     @Test
-    public void testSemicolonsEmptyLines() {
+    public void doubleSemiColonTest() {
         String input = "First line;;Second line";
         List<String> result = LineCheck.lineChecker(input);
         //System.out.println(result);

@@ -4,8 +4,7 @@ public class CallInstruction extends Instruction {
     private final String functionName;
     private final Object value;
 
-    private Integer left;
-    private Integer right;
+
 
     public CallInstruction(String label, String functionName, Object value) {
         super(label, "CALL");
@@ -15,21 +14,7 @@ public class CallInstruction extends Instruction {
 
 
 
-    public int getLeft() {
-        return left;
-    }
 
-    public void setLeft(int left) {
-        this.left = left;
-    }
-
-    public Integer getRight() {
-        return right;
-    }
-
-    public void setRight(int right) {
-        this.right = right;
-    }
 
     @Override
     public int execute(VM vm) {
@@ -37,7 +22,12 @@ public class CallInstruction extends Instruction {
            if(value instanceof RegisterName){
                System.out.println(vm.getRegister((RegisterName) value));
            }else if (value instanceof String){
-               System.out.println(vm.getVariable((String) value));
+               Object varValue = vm.getVariable((String) value);
+               if(varValue == null){
+                   System.out.println(value);
+               }else{
+                   System.out.println(vm.getVariable((String) value));
+               }
            }
         }
         return vm.getProgramCounter() + 1;

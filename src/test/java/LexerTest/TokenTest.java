@@ -1,7 +1,8 @@
 package LexerTest;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
 import project.compiler.lexer.Lexicon;
 import project.compiler.tokens.Token;
 import project.compiler.tokens.TokenCheck;
@@ -12,74 +13,75 @@ import static org.junit.Assert.*;
 public class TokenTest {
 
     @Test
-    public void testPrintStatementWithoutSpace() {
+     void testPrintStatementWithoutSpace() {
         Lexicon lexer = new Lexicon("print\"hello world\"");
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
 
-        assertEquals(2, tokens.size());
-        assertEquals(TokenCheck.PRINT, tokens.get(0).getKey());
-        assertEquals("print", tokens.get(0).getValue());
-        assertEquals(TokenCheck.LITERAL, tokens.get(1).getKey());
-        assertEquals("hello world", tokens.get(1).getValue());
+        Assertions.assertEquals(2, tokens.size());
+        Assertions.assertEquals(TokenCheck.PRINT, tokens.get(0).getKey());
+        Assertions.assertEquals("print", tokens.get(0).getValue());
+        Assertions.assertEquals(TokenCheck.LITERAL, tokens.get(1).getKey());
+        Assertions.assertEquals("hello world", tokens.get(1).getValue());
     }
 
     @Test
-    public void testPrintStatementWithSpace() {
+     void testPrintStatementWithSpace() {
         Lexicon lexer = new Lexicon("print \"hello world\"");
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
 
-        assertEquals(2, tokens.size());
-        assertEquals(TokenCheck.PRINT, tokens.get(0).getKey());
-        assertEquals("print", tokens.get(0).getValue());
-        assertEquals(TokenCheck.LITERAL, tokens.get(1).getKey());
-        assertEquals("hello world", tokens.get(1).getValue());
+        Assertions.assertEquals(2, tokens.size());
+        Assertions.assertEquals(TokenCheck.PRINT, tokens.get(0).getKey());
+        Assertions.assertEquals("print", tokens.get(0).getValue());
+        Assertions.assertEquals(TokenCheck.LITERAL, tokens.get(1).getKey());
+        Assertions.assertEquals("hello world", tokens.get(1).getValue());
     }
 
     @Test
-    public void testInvalidStatement() {
+     void testInvalidStatement() {
         Lexicon lexer = new Lexicon("invalid \"hello world\"");
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
 
-        assertEquals(1, tokens.size());
-        assertEquals(TokenCheck.UNKNOWN, tokens.get(0).getKey());
+        Assertions.assertEquals(1, tokens.size());
+        Assertions.assertEquals(TokenCheck.UNKNOWN, tokens.get(0).getKey());
 
-       assertTrue(tokens.get(0).getValue().startsWith("invalid \"hello world\""));
+       Assertions.assertTrue(tokens.get(0).getValue().startsWith("invalid \"hello world\""));
     }
 
     @Test
-    public void testExceptionHandling() {
-        // Simulating a case where pattern matching could fail
+     void nullEntryStringTest() {
+
         Lexicon lexer = new Lexicon("null");
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
 
-        assertEquals(1, tokens.size());
-        assertEquals(TokenCheck.UNKNOWN, tokens.get(0).getKey());
+        Assertions.assertEquals(1, tokens.size());
+        Assertions.assertEquals(TokenCheck.UNKNOWN, tokens.get(0).getKey());
         //assertTrue(tokens.get(0).getValue().startsWith("Failed to compile due to code: "));
     }
     @Test
-    public void variables() {
+
+     void variablesTest() {
         String code = "a = \"hello\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals("a", tokens.get(0).getValue());
-        assertEquals("=", tokens.get(1).getValue());
-        assertEquals("hello", tokens.get(2).getValue());
+        Assertions.assertEquals("a", tokens.get(0).getValue());
+        Assertions.assertEquals("=", tokens.get(1).getValue());
+        Assertions.assertEquals("hello", tokens.get(2).getValue());
 
     }
     @Test
-    public void variablesSpacing() {
+     void variablesSpacingTest() {
         String code = "x23= \"    hello\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals("x23", tokens.get(0).getValue());
-        assertEquals("=", tokens.get(1).getValue());
-        assertEquals("    hello", tokens.get(2).getValue());
+        Assertions.assertEquals("x23", tokens.get(0).getValue());
+        Assertions.assertEquals("=", tokens.get(1).getValue());
+        Assertions.assertEquals("    hello", tokens.get(2).getValue());
     }
     /*
     @Test - this code for previous method that was in compiler
@@ -92,72 +94,81 @@ public class TokenTest {
         }
     }*/
     @Test
-    public void testAddition() {
+     void additionTest() {
         String code = "2 + 4";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals(3, tokens.size());
-        assertEquals("+", tokens.get(1).getValue());
-        assertEquals("2", tokens.get(0).getValue());
-        assertEquals("4", tokens.get(2).getValue());
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("+", tokens.get(1).getValue());
+        Assertions.assertEquals("2", tokens.get(0).getValue());
+        Assertions.assertEquals("4", tokens.get(2).getValue());
     }
 
     @Test
-    public void testSubtraction() {
+     void subtractionTest() {
         String code = "2 - 4";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals(3, tokens.size());
-        assertEquals("-", tokens.get(1).getValue());
-        assertEquals("2", tokens.get(0).getValue());
-        assertEquals("4", tokens.get(2).getValue());
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("-", tokens.get(1).getValue());
+        Assertions.assertEquals("2", tokens.get(0).getValue());
+        Assertions.assertEquals("4", tokens.get(2).getValue());
     }
     @Test
-    public void testAdditionSyntax() {
+     void additionSyntaxTest() {
         String code = "5       +            5";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals(3, tokens.size());
-        assertEquals("+", tokens.get(1).getValue());
-        assertEquals("5", tokens.get(0).getValue());
-        assertEquals("5", tokens.get(2).getValue());
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("+", tokens.get(1).getValue());
+        Assertions.assertEquals("5", tokens.get(0).getValue());
+        Assertions.assertEquals("5", tokens.get(2).getValue());
     }
 
     @Test
-    public void testMultiply() {
+     void multiplyTest() {
         String code = "2 * 4";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals(3, tokens.size());
-        assertEquals("2", tokens.get(0).getValue());
-        assertEquals("*", tokens.get(1).getValue());
-        assertEquals("4", tokens.get(2).getValue());
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("2", tokens.get(0).getValue());
+        Assertions.assertEquals("*", tokens.get(1).getValue());
+        Assertions.assertEquals("4", tokens.get(2).getValue());
     }
     @Test
-    public void testMultiplySyntax() {
+     void multiplySyntaxTest() {
         String code = "2          *           4";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        assertEquals(3, tokens.size());
-        assertEquals("2", tokens.get(0).getValue());
-        assertEquals("*", tokens.get(1).getValue());
-        assertEquals("4", tokens.get(2).getValue());
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("2", tokens.get(0).getValue());
+        Assertions.assertEquals("*", tokens.get(1).getValue());
+        Assertions.assertEquals("4", tokens.get(2).getValue());
     }
 
 
 @Test
-    public void variableBinaryTest() {
+     void variableBinaryTest() {
         String code = "a =12; b = 22; a + b";
     Lexicon lexer = new Lexicon(code);
     lexer.splitter();
     List<Token> tokens = lexer.getTokens();
-        System.out.println(tokens);
-    System.out.println(tokens.size());
+    Assertions.assertEquals(9, tokens.size());
+    Assertions.assertEquals("NUM_VAR", tokens.get(0).getKey().name());
+    Assertions.assertEquals("VAR_ASSIGN", tokens.get(1).getKey().name());
+    Assertions.assertEquals("LITERAL", tokens.get(2).getKey().name());
+    Assertions.assertEquals("NUM_VAR", tokens.get(3).getKey().name());
+    Assertions.assertEquals("VAR_ASSIGN", tokens.get(4).getKey().name());
+    Assertions.assertEquals("LITERAL", tokens.get(5).getKey().name());
+    Assertions.assertEquals("VAR_ADD_VAR", tokens.get(6).getKey().name());
+    Assertions.assertEquals("ADDITION", tokens.get(7).getKey().name());
+    Assertions.assertEquals("VAR_ADD_VAR", tokens.get(8).getKey().name());
+
 }
 @Test
     public void varAddVarTest(){
@@ -165,15 +176,83 @@ public class TokenTest {
     Lexicon lexer = new Lexicon(code);
     lexer.splitter();
     List<Token> tokens = lexer.getTokens();
-    System.out.println(tokens.size());
-    String var1 = tokens.get(0).getValue();
-    String var2 = tokens.get(3).getValue();
-    String var3 = tokens.get(6).getValue();
-    String var4 = tokens.get(8).getValue();
-    String var5 = tokens.get(10).getValue();
-    System.out.println(var1+ " "+ var2+ " "+var3+" "+ var4+" "+ var5);
-    System.out.println(tokens.get(9).getValue());
+    Assertions.assertEquals(13, tokens.size());
+    Assertions.assertEquals("NUM_VAR", tokens.get(0).getKey().name());
+    Assertions.assertEquals("VAR_ASSIGN", tokens.get(1).getKey().name());
+    Assertions.assertEquals("LITERAL", tokens.get(2).getKey().name());
+    Assertions.assertEquals("NUM_VAR", tokens.get(3).getKey().name());
+    Assertions.assertEquals("VAR_ASSIGN", tokens.get(4).getKey().name());
+    Assertions.assertEquals("LITERAL", tokens.get(5).getKey().name());
+    Assertions.assertEquals("NUM_VAR", tokens.get(6).getKey().name());
+    Assertions.assertEquals("VAR_ASSIGN", tokens.get(7).getKey().name());
+    Assertions.assertEquals("NUM_VAR", tokens.get(8).getKey().name());
+    Assertions.assertEquals("ADDITION", tokens.get(9).getKey().name());
+    Assertions.assertEquals("NUM_VAR", tokens.get(10).getKey().name());
+    Assertions.assertEquals("PRINT", tokens.get(11).getKey().name());
+    Assertions.assertEquals("LITERAL", tokens.get(12).getKey().name());
 }
 
+
+    @Test
+    void whiteSpaceStringTest() {
+        String code = "   ";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Assertions.assertTrue(tokens.isEmpty());
+    }
+
+
+
+    @Test
+    void specialCharactersInStringLiteralTest() {
+        String code = "print \"hello \\\"world\\\"\"";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Assertions.assertEquals(1, tokens.size());
+        Assertions.assertEquals("UNKNOWN", tokens.get(0).getKey().name());
+
+    }
+    @Test
+    void mixedTokensTest() {
+        String code = "print \"hello\" + a";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Assertions.assertEquals(1, tokens.size());
+        Assertions.assertNotEquals(TokenCheck.PRINT, tokens.get(0).getKey());
+        Assertions.assertNotEquals("print", tokens.get(0).getValue());
+
+    }
+    @Test
+    void simpleVariableAssignment() {
+        String code = "a = 12";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("NUM_VAR", tokens.get(0).getKey().name());
+        Assertions.assertEquals("VAR_ASSIGN", tokens.get(1).getKey().name());
+        Assertions.assertEquals("LITERAL", tokens.get(2).getKey().name());
+        Assertions.assertEquals("a", tokens.get(0).getValue());
+        Assertions.assertEquals("=", tokens.get(1).getValue());
+        Assertions.assertEquals("12", tokens.get(2).getValue());
+    }
+
+    @Test
+    void variableAddition() {
+        String code = "a + 10";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Assertions.assertEquals(3, tokens.size());
+        Assertions.assertEquals("VAR_ADD", tokens.get(0).getKey().name());
+        Assertions.assertEquals("ADDITION", tokens.get(1).getKey().name());
+        Assertions.assertEquals("LITERAL", tokens.get(2).getKey().name());
+        Assertions.assertEquals("a", tokens.get(0).getValue());
+        Assertions.assertEquals("+", tokens.get(1).getValue());
+        Assertions.assertEquals("10", tokens.get(2).getValue());
+    }
 
 }

@@ -18,12 +18,13 @@ public class TACgenerator {
         if (ast instanceof PrintStatementNode) {
             PrintStatementNode printNode = (PrintStatementNode) ast;
             ExpressionNode value = printNode.getExpression();
-
+            RegisterName reg1 = getNextRegister();
             if (value instanceof LiteralNode) {
-                String tempVar = getNextTempVar();
-                instructions.add(new LoadInstruction(null, RegisterName.R1, ((LiteralNode) value).getValue()));
-                instructions.add(new CallInstruction(null, "print", RegisterName.R1));
-            } else if (value instanceof VariableNode) {
+                String literalString = "\"" + ((LiteralNode) value).getValue() + "\"";
+                instructions.add(new LoadStringInstruction(null, reg1,literalString ));
+                instructions.add(new CallInstruction(null, "print", reg1));
+            }
+            else if (value instanceof VariableNode) {
                 String variableName = ((VariableNode) value).getName();
                 instructions.add(new MovInstruction(null, RegisterName.R1, variableName));
                 instructions.add(new CallInstruction(null, "print", RegisterName.R1));
@@ -146,6 +147,7 @@ public class TACgenerator {
             RegisterName regResult = getNextRegister();
 
             if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
+
                 instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value).getValue()));
                 instructions.add(new StoreInstruction(null, reg1, variableName));
                 instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) secondValue).getValue()));
@@ -170,16 +172,21 @@ public class TACgenerator {
                 instructions.add(new CallInstruction(null, "print", regResult));
             }
         } else if (ast instanceof LiteralNode) {
-            String tempVar = getNextTempVar();
-            instructions.add(new LoadInstruction(null, RegisterName.R0, ((LiteralNode) ast).getValue()));
+
+            instructions.add(new LoadStringInstruction(null, RegisterName.R0, ((LiteralNode) ast).getValue()));
         } else if (ast instanceof PrintVariableNode) {
             PrintVariableNode printNode = (PrintVariableNode) ast;
             String variableName = printNode.getVariableName();
             ExpressionNode value = printNode.getVariableValue();
+            RegisterName reg1 = getNextRegister();
+            RegisterName reg2 = getNextRegister();
 
+            String literalString = "\"" + ((LiteralNode) value).getValue() + "\"";
             if (value instanceof LiteralNode) {
-                instructions.add(new MovInstruction(null, RegisterName.R0, ((LiteralNode) value).getValue()));
-                instructions.add(new CallInstruction(null, "print", RegisterName.R0));
+                instructions.add(new LoadStringInstruction(null, reg1, literalString));
+                instructions.add(new StoreInstruction(null, reg1, variableName));
+                instructions.add(new MovInstruction(null, reg2,variableName));
+                instructions.add(new CallInstruction(null, "print", reg2));
             } else if (value instanceof VariableNode) {
                 instructions.add(new MovInstruction(null, RegisterName.R0, ((VariableNode) value).getName()));
                 instructions.add(new CallInstruction(null, "print", RegisterName.R0));
@@ -189,9 +196,9 @@ public class TACgenerator {
             String variableName = variableAssignmentNode.getVariableName();
             ExpressionNode value = variableAssignmentNode.getExpression();
             RegisterName reg = getNextRegister();
-
+            String literalString = "\"" + ((LiteralNode) value).getValue() + "\"";
             if (value instanceof LiteralNode) {
-                instructions.add(new LoadInstruction(null, reg, ((LiteralNode) value).getValue()));
+                instructions.add(new LoadStringInstruction(null, reg, literalString));
                 instructions.add(new StoreInstruction(null, reg, variableName));
             }
         }

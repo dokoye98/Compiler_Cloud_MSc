@@ -65,7 +65,16 @@ public class SemanticTree {
             LiteralNode literalNode = (LiteralNode) ast;
             System.out.println("LiteralNode: " + literalNode);
 
-        } else if (ast instanceof UnknownNode) {
+        } else if(ast instanceof BinaryVarExtended){
+            BinaryVarExtended binaryVarExtended = (BinaryVarExtended) ast;
+            ExpressionNode value = binaryVarExtended.getExpression();
+            ExpressionNode value2 = binaryVarExtended.getValue2();
+
+            System.out.println("BinaryVarExtended: "+ binaryVarExtended);
+            checkExpression(value);
+            checkExpression(value2);
+
+        }else if (ast instanceof UnknownNode) {
             UnknownNode unknownNode = (UnknownNode) ast;
             System.out.println("UnknownNode: " + unknownNode.getErrorMessage());
             throw new Exception(unknownNode.getErrorMessage());

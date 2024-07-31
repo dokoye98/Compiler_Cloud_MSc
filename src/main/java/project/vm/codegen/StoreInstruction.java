@@ -13,7 +13,7 @@ public class StoreInstruction extends Instruction{
 
     @Override
     public int execute(VM vm) {
-        Integer value = (Integer) vm.getRegister(register);
+        Object value =  vm.getRegister(register);
         vm.setVariable(variableName, value);
         return vm.getProgramCounter() + 1;
 

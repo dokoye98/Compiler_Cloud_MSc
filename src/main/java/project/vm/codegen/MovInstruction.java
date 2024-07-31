@@ -15,8 +15,14 @@ public class MovInstruction extends Instruction{
        // Object value;
      if(endPoint instanceof RegisterName){
          RegisterName register = (RegisterName) endPoint;
-         int varValue = (int) vm.getVariable((String) source);
-          vm.setRegister(register,varValue);
+         try{
+             int varValue = (int) vm.getVariable((String) source);
+             vm.setRegister(register,varValue);
+         }catch (Exception e){
+             String varValue = (String) vm.getVariable((String) source);
+             vm.setRegister(register,varValue);
+         }
+
      } else if (endPoint instanceof String) {
         // RegisterName register = (RegisterName) source;
          int varValue = (int) vm.getRegister((RegisterName) source);

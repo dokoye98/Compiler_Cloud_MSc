@@ -1,20 +1,26 @@
 package SyntaxTest;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import project.compiler.lexer.Lexicon;
 import project.compiler.nodes.*;
 import project.compiler.nodes.binarynodes.AdditionNode;
+import project.compiler.nodes.binarynodes.DivideNode;
+import project.compiler.nodes.binarynodes.MultiplicationNode;
+import project.compiler.nodes.binarynodes.SubtractionNode;
 import project.compiler.syntaxtree.Parser;
 import project.compiler.tokens.Token;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ParserTest {
 
     @Test
-    public void validPrintTest1() throws Exception {
+    void validPrintTest1() {
         String code = "print \"hello world\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -25,8 +31,9 @@ public class ParserTest {
         PrintStatementNode printNode = (PrintStatementNode) ast;
         assertEquals("Literal(\"hello world\") : String", printNode.getExpression().toString());
     }
+
     @Test
-    public void validPrintTest2() throws Exception {
+    void validPrintTest2() {
         String code = "print\"hello world\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -37,8 +44,9 @@ public class ParserTest {
         PrintStatementNode printNode = (PrintStatementNode) ast;
         assertEquals("Literal(\"hello world\") : String", printNode.getExpression().toString());
     }
+
     @Test
-    public void caseSensitivePrint() throws Exception {
+    void caseSensitivePrint() {
         String code = "PRINT\"hello world\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -49,8 +57,9 @@ public class ParserTest {
         PrintStatementNode printNode = (PrintStatementNode) ast;
         assertEquals("Literal(\"hello world\") : String", printNode.getExpression().toString());
     }
+
     @Test
-    public void stringSpace() throws Exception {
+    void stringSpace() {
         String code = "print\"hello                       world\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -61,8 +70,9 @@ public class ParserTest {
         PrintStatementNode printNode = (PrintStatementNode) ast;
         assertEquals("Literal(\"hello                       world\") : String", printNode.getExpression().toString());
     }
+
     @Test
-    public void emptyStringLiteral() throws Exception {
+    void emptyStringLiteral() {
         String code = "print \"\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -75,7 +85,7 @@ public class ParserTest {
     }
 
     @Test
-    public void specialCharacterStringLiteral() throws Exception {
+    void specialCharacterStringLiteral() {
         String code = "print \"hello\\nworld\"";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -88,7 +98,7 @@ public class ParserTest {
     }
 
     @Test
-    public void whitespaceHandling() throws Exception {
+    void whitespaceHandling() {
         String code = "    print \"hello world\"   ";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
@@ -99,66 +109,133 @@ public class ParserTest {
         PrintStatementNode printNode = (PrintStatementNode) ast;
         assertEquals("Literal(\"hello world\") : String", printNode.getExpression().toString());
     }
+
     @Test
-    public void additionTest() throws Exception {
+    void additionTest() {
         String code = "5 + 5";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
-        System.out.println(tokens);
         Parser parser = new Parser(tokens);
         Node ast = parser.parse();
         assertInstanceOf(BinaryOperationNode.class, ast);
         BinaryOperationNode binaryNode = (AdditionNode) ast;
 
 
-
     }
     @Test
-    public void similarToPrint() {
-        String code = "prin \"hello world\"";
+    void binaryAssignTest() {
+        String code = "a = 5; b = 4; c = a + b; print c";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
         Parser parser = new Parser(tokens);
-        Exception exception = assertThrows(Exception.class, parser::parse);
-       // assertTrue(exception.getMessage().contains("Unknown Token:"));
+        Node ast = parser.parse();
+        assertInstanceOf(BinaryAssignNode.class, ast);
+        BinaryAssignNode binaryNode = (BinaryAssignNode) ast;
+        LiteralNode literalNode = new LiteralNode("5");
+        LiteralNode literalNode1 = new LiteralNode("4");
+        assertInstanceOf(LiteralNode.class, binaryNode.getVariableOne().getExpression());
+        assertInstanceOf(LiteralNode.class, binaryNode.getVariableTwo().getExpression());
+        assertEquals(literalNode.getValue(), ((LiteralNode) binaryNode.getVariableOne().getExpression()).getValue());
+        assertEquals(literalNode1.getValue(), ((LiteralNode) binaryNode.getVariableTwo().getExpression()).getValue());
+
     }
 
 
     @Test
-    public void similarToPrint2() {
-        String code = "rint \"hello world\"";
+    void subtractionTest() {
+        String code = "10 - 3";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
         Parser parser = new Parser(tokens);
-        Exception exception = assertThrows(Exception.class, parser::parse);
-       // assertTrue(exception.getMessage().contains("Unknown Token:"));
+        Node ast = parser.parse();
+        assertInstanceOf(BinaryOperationNode.class, ast);
+        BinaryOperationNode binaryNode = (SubtractionNode) ast;
+        assertEquals("10", ((LiteralNode) binaryNode.getLeft()).getValue());
+        assertEquals("3", ((LiteralNode) binaryNode.getRight()).getValue());
     }
-    @Test
-    public void invalidPrint() {
-        String code = "print hello world";
-        Lexicon lexer = new Lexicon(code);
-        lexer.splitter();
-        List<Token> tokens = lexer.getTokens();
-        Parser parser = new Parser(tokens);
-        Exception exception = assertThrows(Exception.class, parser::parse);
-
-       // assertTrue(exception.getMessage().contains("Unknown Token:"));
-    }
-
 
     @Test
-    public void invalidFunction() {
-        String code = "hello world";
+    void multiplicationTest() {
+        String code = "4 * 2";
         Lexicon lexer = new Lexicon(code);
         lexer.splitter();
         List<Token> tokens = lexer.getTokens();
         Parser parser = new Parser(tokens);
-        Exception exception = assertThrows(Exception.class, parser::parse);
-        //assertTrue(exception.getMessage().contains("Unknown Token:"));
+        Node ast = parser.parse();
+        assertInstanceOf(BinaryOperationNode.class, ast);
+        BinaryOperationNode binaryNode = (MultiplicationNode) ast;
+        assertEquals("4", ((LiteralNode) binaryNode.getLeft()).getValue());
+        assertEquals("2", ((LiteralNode) binaryNode.getRight()).getValue());
     }
+
+    @Test
+    void divisionTest() {
+        String code = "8 / 2";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Parser parser = new Parser(tokens);
+        Node ast = parser.parse();
+        assertInstanceOf(BinaryOperationNode.class, ast);
+        BinaryOperationNode binaryNode = (DivideNode) ast;
+        assertEquals("8", ((LiteralNode) binaryNode.getLeft()).getValue());
+        assertEquals("2", ((LiteralNode) binaryNode.getRight()).getValue());
+    }
+
+    @Test
+    void invalidSyntaxTest() {
+        String code = "a = 5 b = 4";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Parser parser = new Parser(tokens);
+       Node ast = parser.parse();
+        Assertions.assertEquals(UnknownNode.class,ast.getClass());
+    }
+
+
+    @Test
+    void incompleteVarTest() {
+        String code = "a = 12";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Parser parser = new Parser(tokens);
+        Node ast = parser.parse();
+        assertInstanceOf(UnknownNode.class, ast);
+
+    }
+
+    @Test
+    void binaryParamsTest() {
+        String code = "a + 10";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Parser parser = new Parser(tokens);
+        Node ast = parser.parse();
+        assertInstanceOf(BinaryOperationNode.class, ast);
+        BinaryOperationNode binaryNode = (BinaryOperationNode) ast;
+        assertInstanceOf(LiteralNode.class, binaryNode.getLeft());
+        assertInstanceOf(LiteralNode.class, binaryNode.getRight());
+
+    }
+
+    @Test
+    void invalidVarTest() {
+        String code = "a = a + 10";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Parser parser = new Parser(tokens);
+        Node ast = parser.parse();
+        assertInstanceOf(UnknownNode.class, ast);
+
+    }
+
 
 
 
