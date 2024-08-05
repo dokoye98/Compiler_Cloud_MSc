@@ -16,14 +16,19 @@ public class SubInstruction  extends Instruction{
 
     @Override
     public int execute(VM vm) {
-        int value = (int) vm.getRegister(operand1);
-        int value1 = (int) vm.getRegister(operand2);
-        vm.setRegister(result,value-value1);
+        String value1 = (String) vm.getRegister(operand1);
+        String value2 = (String) vm.getRegister(operand2);
+        int intValue1 = Integer.parseInt(value1, 2);
+        int intValue2 = Integer.parseInt(value2, 2);
+        int total= intValue1-intValue2;
+        String bin = Integer.toBinaryString(total);
+        vm.setRegister(result,bin);
         return vm.getProgramCounter() + 1;
     }
 
     @Override
     public String toString() {
-        return getLabelString() + getOpcode() + " " + result + ", " + operand1 + " , " + operand2;
+        return getOpcode() + " " + result + ", " + operand1 + " , " + operand2;
     }
+
 }

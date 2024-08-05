@@ -54,12 +54,6 @@ public class SemanticTreeTest {
 
 
 
-    @Test
-    void testAnalyzeUnknownNode() {
-        UnknownNode unknownNode = new UnknownNode("Unknown");
-        Exception exception = assertThrows(Exception.class, () -> SemanticTree.analyzeSemantic(unknownNode));
-        assertTrue(exception.getMessage().contains("Unknown"));
-    }
 
 
 

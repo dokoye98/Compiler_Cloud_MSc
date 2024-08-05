@@ -40,8 +40,14 @@ public class TACgenerator {
                 RegisterName reg1 = getNextRegister();
                 RegisterName reg2 = getNextRegister();
                 RegisterName regResult = getNextRegister();
-                instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) left).getValue()));
-                instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) right).getValue()));
+                String value1 = ((LiteralNode) left).getValue();
+                String value2 = ((LiteralNode) right).getValue();
+                int intValue1 = Integer.parseInt(value1);
+                int intValue2 = Integer.parseInt(value2);
+                String binValue1 = "\"" +Integer.toBinaryString(intValue1) +"\"" ;
+                String binValue2 = "\"" +Integer.toBinaryString(intValue2) +"\"" ;
+                instructions.add(new LoadStringInstruction(null, reg1,binValue1 ));
+                instructions.add(new LoadStringInstruction(null, reg2,binValue2 ));
 
                 switch (operation) {
                     case "+":
@@ -76,101 +82,112 @@ public class TACgenerator {
             if (assignOperationOne != null && assignOperationTwo != null) {
                 ExpressionNode value1 = assignOperationOne.getExpression();
                 ExpressionNode value2 = assignOperationTwo.getExpression();
-                if (value1 instanceof LiteralNode && value2 instanceof LiteralNode) {
-                    instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value1).getValue()));
-                    instructions.add(new StoreInstruction(null, reg1, assignOperationOne.getVariableName()));
-                    instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) value2).getValue()));
-                    instructions.add(new StoreInstruction(null, reg2, assignOperationTwo.getVariableName()));
-                    instructions.add(new MovInstruction(null, reg3, assignOperationOne.getVariableName()));
-                    instructions.add(new MovInstruction(null, reg4, assignOperationTwo.getVariableName()));
-                    switch (operation) {
-                        case "+":
-                            instructions.add(new AddInstruction(null, regResult, reg3, reg4));
-                            break;
-                        case "-":
-                            instructions.add(new SubInstruction(null, regResult, reg3, reg4));
-                            break;
-                        case "*":
-                            instructions.add(new MulInstruction(null, regResult, reg3, reg4));
-                            break;
-                        case "/":
-                            instructions.add(new DivInstruction(null, regResult, reg3, reg4));
-                            break;
-                    }
 
-                    instructions.add(new MovInstruction(null, totalVar, regResult));
-                    instructions.add(new CallInstruction(null, "print", totalVar));
+                String strValue1 = ((LiteralNode) value1).getValue();
+                String strValue2 = ((LiteralNode) value2).getValue();
+                int intValue1 = Integer.parseInt(strValue1);
+                int intValue2 = Integer.parseInt(strValue2);
+                String binValue1 = "\"" +Integer.toBinaryString(intValue1) +"\"" ;
+                String binValue2 = "\"" +Integer.toBinaryString(intValue2) +"\"" ;
+                instructions.add(new LoadStringInstruction(null, reg1, binValue1));
+                instructions.add(new StoreInstruction(null, reg1, assignOperationOne.getVariableName()));
+                instructions.add(new LoadStringInstruction(null, reg2,binValue2));
+                instructions.add(new StoreInstruction(null, reg2, assignOperationTwo.getVariableName()));
+                instructions.add(new MovInstruction(null, reg3, assignOperationOne.getVariableName()));
+                instructions.add(new MovInstruction(null, reg4, assignOperationTwo.getVariableName()));
+                switch (operation) {
+                    case "+":
+                        instructions.add(new AddInstruction(null, regResult, reg3, reg4));
+                        break;
+                    case "-":
+                        instructions.add(new SubInstruction(null, regResult, reg3, reg4));
+                        break;
+                    case "*":
+                        instructions.add(new MulInstruction(null, regResult, reg3, reg4));
+                        break;
+                    case "/":
+                        instructions.add(new DivInstruction(null, regResult, reg3, reg4));
+                        break;
                 }
+
+                instructions.add(new MovInstruction(null, totalVar, regResult));
+                instructions.add(new CallInstruction(null, "print", totalVar));
             }
         } else if (ast instanceof BinaryAssignmentNode) {
             BinaryAssignmentNode binaryAssignmentNode = (BinaryAssignmentNode) ast;
             String variableName = binaryAssignmentNode.getVariableName();
-            ExpressionNode value = binaryAssignmentNode.getValue();
-            ExpressionNode secondValue = binaryAssignmentNode.getSecondValue();
+            ExpressionNode value1 = binaryAssignmentNode.getValue();
+            ExpressionNode value2 = binaryAssignmentNode.getSecondValue();
             String operation = binaryAssignmentNode.getOperation();
             RegisterName reg1 = getNextRegister();
             RegisterName reg2 = getNextRegister();
             RegisterName regResult = getNextRegister();
+            String strValue1 = ((LiteralNode) value1).getValue();
+            String strValue2 = ((LiteralNode) value2).getValue();
+            int intValue1 = Integer.parseInt(strValue1);
+            int intValue2 = Integer.parseInt(strValue2);
+            String binValue1 = "\"" +Integer.toBinaryString(intValue1) +"\"" ;
+            String binValue2 = "\"" +Integer.toBinaryString(intValue2) +"\"" ;
+            instructions.add(new LoadStringInstruction(null, reg1, binValue1));
+            instructions.add(new StoreInstruction(null, reg1, variableName));
+            instructions.add(new LoadStringInstruction(null, reg2, binValue2));
 
-            if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
-                instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value).getValue()));
-                instructions.add(new StoreInstruction(null, reg1, variableName));
-                instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) secondValue).getValue()));
-
-                switch (operation) {
-                    case "+":
-                        instructions.add(new AddInstruction(null, regResult, reg1, reg2));
-                        break;
-                    case "-":
-                        instructions.add(new SubInstruction(null, regResult, reg1, reg2));
-                        break;
-                    case "*":
-                        instructions.add(new MulInstruction(null, regResult, reg1, reg2));
-                        break;
-                    case "/":
-                        instructions.add(new DivInstruction(null, regResult, reg1, reg2));
-                        break;
-                }
-
-                instructions.add(new MovInstruction(null, variableName, regResult));
-                instructions.add(new CallInstruction(null, "print", regResult));
+            switch (operation) {
+                case "+":
+                    instructions.add(new AddInstruction(null, regResult, reg1, reg2));
+                    break;
+                case "-":
+                    instructions.add(new SubInstruction(null, regResult, reg1, reg2));
+                    break;
+                case "*":
+                    instructions.add(new MulInstruction(null, regResult, reg1, reg2));
+                    break;
+                case "/":
+                    instructions.add(new DivInstruction(null, regResult, reg1, reg2));
+                    break;
             }
+
+            instructions.add(new MovInstruction(null, variableName, regResult));
+            instructions.add(new CallInstruction(null, "print", regResult));
         } else if (ast instanceof BinaryVarExtended) {
             BinaryVarExtended binaryVarExtended = (BinaryVarExtended) ast;
             String variableName = binaryVarExtended.getVariableName();
-            ExpressionNode value = binaryVarExtended.getExpression();
-            ExpressionNode secondValue = binaryVarExtended.getValue2();
+            ExpressionNode value1 = binaryVarExtended.getExpression();
+            ExpressionNode value2 = binaryVarExtended.getValue2();
             String operation = binaryVarExtended.getOperation();
             String variableName2 = binaryVarExtended.getVariableName2();
             RegisterName reg1 = getNextRegister();
             RegisterName reg2 = getNextRegister();
             RegisterName regResult = getNextRegister();
+            String strValue1 = ((LiteralNode) value1).getValue();
+            String strValue2 = ((LiteralNode) value2).getValue();
+            int intValue1 = Integer.parseInt(strValue1);
+            int intValue2 = Integer.parseInt(strValue2);
+            String binValue1 = "\"" +Integer.toBinaryString(intValue1) +"\"" ;
+            String binValue2 = "\"" +Integer.toBinaryString(intValue2) +"\"" ;
 
-            if (value instanceof LiteralNode && secondValue instanceof LiteralNode) {
+            instructions.add(new LoadStringInstruction(null, reg1, binValue1));
+            instructions.add(new StoreInstruction(null, reg1, variableName));
+            instructions.add(new LoadStringInstruction(null, reg2, binValue2));
+            instructions.add(new StoreInstruction(null, reg2, variableName2));
 
-                instructions.add(new LoadInstruction(null, reg1, ((LiteralNode) value).getValue()));
-                instructions.add(new StoreInstruction(null, reg1, variableName));
-                instructions.add(new LoadInstruction(null, reg2, ((LiteralNode) secondValue).getValue()));
-                instructions.add(new StoreInstruction(null, reg2, variableName2));
-
-                switch (operation) {
-                    case "+":
-                        instructions.add(new AddInstruction(null, regResult, reg1, reg2));
-                        break;
-                    case "-":
-                        instructions.add(new SubInstruction(null, regResult, reg1, reg2));
-                        break;
-                    case "*":
-                        instructions.add(new MulInstruction(null, regResult, reg1, reg2));
-                        break;
-                    case "/":
-                        instructions.add(new DivInstruction(null, regResult, reg1, reg2));
-                        break;
-                }
-
-                instructions.add(new MovInstruction(null, variableName, regResult));
-                instructions.add(new CallInstruction(null, "print", regResult));
+            switch (operation) {
+                case "+":
+                    instructions.add(new AddInstruction(null, regResult, reg1, reg2));
+                    break;
+                case "-":
+                    instructions.add(new SubInstruction(null, regResult, reg1, reg2));
+                    break;
+                case "*":
+                    instructions.add(new MulInstruction(null, regResult, reg1, reg2));
+                    break;
+                case "/":
+                    instructions.add(new DivInstruction(null, regResult, reg1, reg2));
+                    break;
             }
+
+            instructions.add(new MovInstruction(null, variableName, regResult));
+            instructions.add(new CallInstruction(null, "print", regResult));
         } else if (ast instanceof LiteralNode) {
 
             instructions.add(new LoadStringInstruction(null, RegisterName.R0, ((LiteralNode) ast).getValue()));

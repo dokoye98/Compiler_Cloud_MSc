@@ -29,6 +29,6 @@ public class LoadStringInstruction extends Instruction{
 
     @Override
     public String toString() {
-        return getLabelString() + getOpcode() + " " + register + ", \"" + value + "\"";
+        return "LOAD "   + register + ", " + value ;
     }
 }

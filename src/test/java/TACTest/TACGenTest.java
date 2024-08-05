@@ -29,11 +29,11 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(5, instructions.size());
-        assertEquals(": LOAD R0, 5", instructions.get(0).toString());
-        assertEquals(": LOAD R1, 5", instructions.get(1).toString());
-        assertEquals(": ADD R2, R0 , R1", instructions.get(2).toString());
-        assertEquals(": MOV result, R2", instructions.get(3).toString());
-        assertEquals(": CALL print, R2", instructions.get(4).toString());
+        assertEquals("LOAD R0, \"101\"", instructions.get(0).toString());
+        assertEquals("LOAD R1, \"101\"", instructions.get(1).toString());
+        assertEquals("ADD R2, R0 , R1", instructions.get(2).toString());
+        assertEquals("MOV result, R2", instructions.get(3).toString());
+        assertEquals("CALL print, R2", instructions.get(4).toString());
     }
 
     @Test
@@ -48,15 +48,15 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(9, instructions.size());
-        assertEquals(": LOAD R0, 5", instructions.get(0).toString());
-        assertEquals(": STORE a , R0", instructions.get(1).toString());
-        assertEquals(": LOAD R1, 10", instructions.get(2).toString());
-        assertEquals(": STORE b , R1", instructions.get(3).toString());
-        assertEquals(": MOV R2, a", instructions.get(4).toString());
-        assertEquals(": MOV R3, b", instructions.get(5).toString());
-        assertEquals(": ADD R4, R2 , R3", instructions.get(6).toString());
-        assertEquals(": MOV c, R4", instructions.get(7).toString());
-        assertEquals(": CALL print, c", instructions.get(8).toString());
+        assertEquals("LOAD R0, \"101\"", instructions.get(0).toString());
+        assertEquals("STORE a , R0", instructions.get(1).toString());
+        assertEquals("LOAD R1, \"1010\"", instructions.get(2).toString());
+        assertEquals("STORE b , R1", instructions.get(3).toString());
+        assertEquals("MOV R2, a", instructions.get(4).toString());
+        assertEquals("MOV R3, b", instructions.get(5).toString());
+        assertEquals("ADD R4, R2 , R3", instructions.get(6).toString());
+        assertEquals("MOV c, R4", instructions.get(7).toString());
+        assertEquals("CALL print, c", instructions.get(8).toString());
 
     }
 
@@ -72,13 +72,13 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(2, instructions.size());
-        assertEquals(": LOAD_STRING R0, \"\"hello\"\"", instructions.get(0).toString());
-        assertEquals(": CALL print, R0", instructions.get(1).toString());
+        assertEquals("LOAD R0, \"hello\"", instructions.get(0).toString());
+        assertEquals("CALL print, R0", instructions.get(1).toString());
 
 
     }
     @Test
-    void addVarEqualsTest() {
+    void differentSyntaxVarTest() {
         VariableAssignmentNode varAssign1 = new VariableAssignmentNode("a", new LiteralNode("2"));
         VariableAssignmentNode varAssign2 = new VariableAssignmentNode("b", new LiteralNode("3"));
         AddVarEquals addVarEquals = new AddVarEquals("+", "c", varAssign1, varAssign2);
@@ -86,15 +86,15 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(addVarEquals);
         assertNotNull(instructions);
         assertEquals(9, instructions.size());
-        assertEquals(": LOAD R0, 2", instructions.get(0).toString());
-        assertEquals(": STORE a , R0", instructions.get(1).toString());
-        assertEquals(": LOAD R1, 3", instructions.get(2).toString());
-        assertEquals(": STORE b , R1", instructions.get(3).toString());
-        assertEquals(": MOV R2, a", instructions.get(4).toString());
-        assertEquals(": MOV R3, b", instructions.get(5).toString());
-        assertEquals(": ADD R4, R2 , R3", instructions.get(6).toString());
-        assertEquals(": MOV c, R4", instructions.get(7).toString());
-        assertEquals(": CALL print, c", instructions.get(8).toString());
+        assertEquals("LOAD R0, \"10\"", instructions.get(0).toString());
+        assertEquals("STORE a , R0", instructions.get(1).toString());
+        assertEquals("LOAD R1, \"11\"", instructions.get(2).toString());
+        assertEquals("STORE b , R1", instructions.get(3).toString());
+        assertEquals("MOV R2, a", instructions.get(4).toString());
+        assertEquals("MOV R3, b", instructions.get(5).toString());
+        assertEquals("ADD R4, R2 , R3", instructions.get(6).toString());
+        assertEquals("MOV c, R4", instructions.get(7).toString());
+        assertEquals("CALL print, c", instructions.get(8).toString());
     }
     @Test
     void stringTest() {
@@ -108,8 +108,8 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(2, instructions.size());
-        assertEquals(": LOAD_STRING R0, \"\"wolf\"\"", instructions.get(0).toString());
-        assertEquals(": CALL print, R0", instructions.get(1).toString());
+        assertEquals("LOAD R0, \"wolf\"", instructions.get(0).toString());
+        assertEquals("CALL print, R0", instructions.get(1).toString());
     }
 
     @Test
@@ -138,10 +138,10 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(4, instructions.size());
-        assertEquals(": LOAD_STRING R0, \"\"fluffy\"\"", instructions.get(0).toString());
-        assertEquals(": STORE wolf , R0", instructions.get(1).toString());
-        assertEquals(": MOV R1, wolf", instructions.get(2).toString());
-        assertEquals(": CALL print, R1", instructions.get(3).toString());
+        assertEquals("LOAD R0, \"fluffy\"", instructions.get(0).toString());
+        assertEquals("STORE wolf , R0", instructions.get(1).toString());
+        assertEquals("MOV R1, wolf", instructions.get(2).toString());
+        assertEquals("CALL print, R1", instructions.get(3).toString());
     }
 
     @Test
@@ -172,15 +172,15 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(9, instructions.size());
-        assertEquals(": LOAD R0, 5", instructions.get(0).toString());
-        assertEquals(": STORE a , R0", instructions.get(1).toString());
-        assertEquals(": LOAD R1, 10", instructions.get(2).toString());
-        assertEquals(": STORE b , R1", instructions.get(3).toString());
-        assertEquals(": MOV R2, a", instructions.get(4).toString());
-        assertEquals(": MOV R3, b", instructions.get(5).toString());
-        assertEquals(": ADD R4, R2 , R3", instructions.get(6).toString());
-        assertEquals(": MOV c, R4", instructions.get(7).toString());
-        assertEquals(": CALL print, c", instructions.get(8).toString());
+        assertEquals("LOAD R0, \"101\"", instructions.get(0).toString());
+        assertEquals("STORE a , R0", instructions.get(1).toString());
+        assertEquals("LOAD R1, \"1010\"", instructions.get(2).toString());
+        assertEquals("STORE b , R1", instructions.get(3).toString());
+        assertEquals("MOV R2, a", instructions.get(4).toString());
+        assertEquals("MOV R3, b", instructions.get(5).toString());
+        assertEquals("ADD R4, R2 , R3", instructions.get(6).toString());
+        assertEquals("MOV c, R4", instructions.get(7).toString());
+        assertEquals("CALL print, c", instructions.get(8).toString());
     }
     @Test
     void incompleteAssignmentTest() {
@@ -210,12 +210,30 @@ public class TACGenTest {
         List<Instruction> instructions = tacGenerator.generateCode(ast);
         assertNotNull(instructions);
         assertEquals(6, instructions.size());
-        assertEquals(": LOAD R0, 12", instructions.get(0).toString());
-        assertEquals(": STORE a , R0", instructions.get(1).toString());
-        assertEquals(": LOAD R1, 10", instructions.get(2).toString());
-        assertEquals(": ADD R2, R0 , R1", instructions.get(3).toString());
+        assertEquals("LOAD R0, \"1100\"", instructions.get(0).toString());
+        assertEquals("STORE a , R0", instructions.get(1).toString());
+        assertEquals("LOAD R1, \"1010\"", instructions.get(2).toString());
+        assertEquals("ADD R2, R0 , R1", instructions.get(3).toString());
     }
 
 
+    @Test
+    void multiplyTest() {
+        String code = "5 * 76";
+        Lexicon lexer = new Lexicon(code);
+        lexer.splitter();
+        List<Token> tokens = lexer.getTokens();
+        Parser parser = new Parser(tokens);
+        Node ast = parser.parse();
+        TACgenerator tacGenerator = new TACgenerator();
+        List<Instruction> instructions = tacGenerator.generateCode(ast);
+        assertNotNull(instructions);
+        assertEquals(5, instructions.size());
+        assertEquals("LOAD R0, \"101\"", instructions.get(0).toString());
+        assertEquals("LOAD R1, \"1001100\"", instructions.get(1).toString());
+        assertEquals("MUL R2, R0 , R1", instructions.get(2).toString());
+        assertEquals("MOV result, R2", instructions.get(3).toString());
+        assertEquals("CALL print, R2", instructions.get(4).toString());
+    }
 
 }

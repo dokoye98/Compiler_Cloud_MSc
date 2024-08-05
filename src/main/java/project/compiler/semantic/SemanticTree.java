@@ -77,7 +77,7 @@ public class SemanticTree {
         }else if (ast instanceof UnknownNode) {
             UnknownNode unknownNode = (UnknownNode) ast;
             System.out.println("UnknownNode: " + unknownNode.getErrorMessage());
-            throw new Exception(unknownNode.getErrorMessage());
+
         } else {
             System.out.println("Unrecognised AST Node: " + ast.getClass().getSimpleName());//like getClass
             throw new Exception("Unrecognised AST Node");

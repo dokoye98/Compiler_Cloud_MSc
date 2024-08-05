@@ -21,7 +21,7 @@ public class StoreInstruction extends Instruction{
 
     @Override
     public String toString() {
-        return getLabelString() + getOpcode() + " "  + variableName + " , " + register;
+        return getOpcode() + " "  + variableName + " , " + register;
     }
 
 

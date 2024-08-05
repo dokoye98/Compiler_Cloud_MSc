@@ -25,7 +25,7 @@ public class MovInstruction extends Instruction{
 
      } else if (endPoint instanceof String) {
         // RegisterName register = (RegisterName) source;
-         int varValue = (int) vm.getRegister((RegisterName) source);
+         Object varValue =  vm.getRegister((RegisterName) source);
          vm.setVariable((String)endPoint,varValue);
 
      } else {
@@ -36,6 +36,6 @@ public class MovInstruction extends Instruction{
 
     @Override
     public String toString() {
-        return getLabelString() + getOpcode() + " " + endPoint + ", " + source;
+        return  getOpcode() + " " + endPoint + ", " + source;
     }
 }

@@ -37,8 +37,8 @@ public class TACVisual {
                 String t2 = getNextTempVar();
                 int leftValue = Integer.parseInt(((LiteralNode) left).getValue());
                 int rightValue = Integer.parseInt(((LiteralNode) right).getValue());
-                tacCode.add(t0 + " = " +"0x" + Integer.toHexString(leftValue)+ " (" + leftValue+")");
-                tacCode.add(t1 + " = " + "0x"+ Integer.toHexString(rightValue) + " ("+ rightValue+")");
+                tacCode.add(t0 + " = " + Integer.toBinaryString(leftValue)+ " (" + leftValue+")");
+                tacCode.add(t1 + " = " +  Integer.toBinaryString(rightValue) + " ("+ rightValue+")");
                 tacCode.add(t2 + " = " + t0 +" "+ operation +" "+ t1);
             }
         } else if(ast instanceof BinaryAssignNode){
@@ -60,9 +60,9 @@ public class TACVisual {
                 String variableName2 = assignOperationTwo.getVariableName();
                 int valueNum = Integer.parseInt(((LiteralNode) value1).getValue());
                 int valueNumTwo = Integer.parseInt(((LiteralNode) value2).getValue());
-                tacCode.add(t0 + " = " + "0x" + Integer.toHexString(valueNum) + " (" + valueNum + ")");
+                tacCode.add(t0 + " = " + Integer.toBinaryString(valueNum) + " (" + valueNum + ")");
                 tacCode.add(variableName + " = " + t0);
-                tacCode.add(t1 + " = " + "0x" + Integer.toHexString(valueNumTwo) + " (" + valueNumTwo + ")");
+                tacCode.add(t1 + " = " +  Integer.toBinaryString(valueNumTwo) + " (" + valueNumTwo + ")");
                 tacCode.add((variableName2+ " = " + t1));
                 tacCode.add(t2 + " = " +variableName);
                 tacCode.add(t3 + " = " +variableName2);
@@ -86,9 +86,9 @@ public class TACVisual {
                 int valueNum = Integer.parseInt(((LiteralNode) value).getValue());
                 int secondValueNum = Integer.parseInt(((LiteralNode) secondValue).getValue());
                 //  System.out.println(value + " " + secondValue); - >  using print to check secondValue
-                tacCode.add(variableName + " = " + "0x" + Integer.toHexString(valueNum) + " (" + valueNum + ")");
+                tacCode.add(variableName + " = " + Integer.toBinaryString(valueNum) + " (" + valueNum + ")");
                 tacCode.add(t0 + " = " + variableName);
-                tacCode.add(t1 + " = " + "0x" + Integer.toHexString(secondValueNum) + " (" + secondValueNum + ")");
+                tacCode.add(t1 + " = " +  Integer.toBinaryString(secondValueNum) + " (" + secondValueNum + ")");
                 tacCode.add(t2 + " = " + t0 + " " + operation + " " + t1);
 
             }
@@ -106,8 +106,8 @@ public class TACVisual {
                 int valueNum = Integer.parseInt(((LiteralNode) value).getValue());
                 int secondValueNum = Integer.parseInt(((LiteralNode) secondValue).getValue());
                 //  System.out.println(value + " " + secondValue); - >  using print to check secondValue
-                tacCode.add(variableName + " = " + "0x" + Integer.toHexString(valueNum) + " (" + valueNum + ")");
-                tacCode.add(variableName2 + " = " + "0x" + Integer.toHexString(secondValueNum) + " (" + secondValueNum + ")");
+                tacCode.add(variableName + " = " +  Integer.toBinaryString(valueNum) + " (" + valueNum + ")");
+                tacCode.add(variableName2 + " = " +  Integer.toBinaryString(secondValueNum) + " (" + secondValueNum + ")");
                 tacCode.add(t0 + " = " + variableName);
                 tacCode.add(t1 + " = " +  variableName2);
                 tacCode.add(t2 + " = " + t0 + " " + operation + " " + t1);

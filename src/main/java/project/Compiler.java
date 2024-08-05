@@ -56,8 +56,7 @@ public class Compiler {
                 if(AssemblyGenerator.assemble(ast) != null) {
                     System.out.println("Assembly Code here:\n");
                     System.out.println(AssemblyGenerator.assemble(ast));
-                    assemblyWriter(AssemblyGenerator.assemble(ast));
-                    NasmRunner.nasmController();
+
 
                 }
            } catch (Exception e) {

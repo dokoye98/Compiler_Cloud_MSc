@@ -35,6 +35,6 @@ public class CallInstruction extends Instruction {
 
     @Override
     public String toString() {
-        return getLabelString() + getOpcode() + " " + functionName + ", " + value;
+        return getOpcode() + " " + functionName + ", " + value;
     }
 }
